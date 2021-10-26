@@ -1,18 +1,18 @@
 package com.example.fakenotification
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
+import androidx.core.graphics.drawable.IconCompat
 import androidx.databinding.DataBindingUtil
 import com.example.fakenotification.databinding.ActivityMainBinding
 import kotlin.random.Random
@@ -38,9 +38,26 @@ class MainActivity : AppCompatActivity() {
             clickedNotify(useBigPicture = true, isBigText = true)
         }
 
-        binding.btnNotifyMessage.setOnClickListener {
+        binding.btnNotifyInbox.setOnClickListener {
             clickedNotify(useInboxStyle = true)
         }
+
+        binding.btnNotifyMessage.setOnClickListener {
+            clickedNotify(messageStyle = true)
+        }
+
+        binding.btnNotifyContentView.setOnClickListener {
+            clickedNotify(useContentView = true)
+        }
+
+        binding.notifyBigContentView.setOnClickListener {
+            clickedNotify(useBigContentView = true)
+        }
+
+        binding.btnNotifyHeadup.setOnClickListener {
+            clickedNotify(useHeadsupContentView = true)
+        }
+
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -51,7 +68,11 @@ class MainActivity : AppCompatActivity() {
     private fun clickedNotify(
         isBigText: Boolean = false,
         useBigPicture: Boolean = false,
-        useInboxStyle: Boolean = false
+        useInboxStyle: Boolean = false,
+        messageStyle: Boolean = false,
+        useContentView: Boolean = false,
+        useBigContentView: Boolean = false,
+        useHeadsupContentView: Boolean = false
     ) =
         with(binding) {
             val title = edtTitle.text.toString()
@@ -61,7 +82,17 @@ class MainActivity : AppCompatActivity() {
                     .toInt()
 
             val notification =
-                createNotification(title, content, isBigText, useBigPicture, useInboxStyle)
+                createNotification(
+                    title,
+                    content,
+                    isBigText,
+                    useBigPicture,
+                    useInboxStyle,
+                    messageStyle,
+                    useContentView,
+                    useBigContentView,
+                    useHeadsupContentView
+                )
 
             notify(notifyId, notification)
         }
@@ -88,7 +119,11 @@ class MainActivity : AppCompatActivity() {
         content: String,
         isBigText: Boolean,
         useBigPicture: Boolean,
-        useInboxStyle: Boolean
+        useInboxStyle: Boolean,
+        useMessageStyle: Boolean,
+        useContentView: Boolean,
+        useBigContentView: Boolean,
+        useHeadsupContentView: Boolean
     ): Notification {
         val builder = NotificationCompat.Builder(this, channel_id)
             .setSmallIcon(R.drawable.ic_baseline_directions_car_24)
@@ -99,8 +134,14 @@ class MainActivity : AppCompatActivity() {
             .setContentIntent(createContentIntent(content))
 
         if (isBigText) {
-            builder.setStyle(NotificationCompat.BigTextStyle().setSummaryText("summary text").setBigContentTitle("xxxxxxxxxxxxxxxxxxxxxxxxxxxxx").bigText("bccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbcccc"))
+            builder.setStyle(
+                NotificationCompat.BigTextStyle().setSummaryText("summary text")
+                    .setBigContentTitle("xxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                    .bigText("bccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbccccbcccc")
+                    .setSummaryText("summary text")
+            )
         }
+
 
         if (useBigPicture) {
             val bitmap = BitmapFactory.decodeResource(
@@ -108,20 +149,65 @@ class MainActivity : AppCompatActivity() {
                 R.drawable.bitmap
             )
             builder.setStyle(
-                NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(bitmap).setSummaryText("summary text").setBigContentTitle("big content title")
-                /*.setBigContentTitle("big title").setSummaryText("summary text")*/
+                NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(bitmap)
+                    .setSummaryText("summary text").setBigContentTitle("big content title")
             )
         }
 
+        if (useMessageStyle) {
+            val person1 = Person.Builder()
+                .setKey("person1 key")
+                .setIcon(IconCompat.createWithResource(this, R.drawable.person1))
+                .setName("person1")
+                .setUri("person1 uri")
+                .setBot(true)
+                .setImportant(true)
+                .build()
+
+            val person2 = Person.Builder()
+                .setKey("person2 key")
+                .setIcon(IconCompat.createWithResource(this, R.drawable.person2))
+                .setName("person2")
+                .setUri("person2 uri")
+                .build()
+
+
+            val messageStyle =
+                NotificationCompat.MessagingStyle(person1)
+                    .setConversationTitle("Message title")
+                    .addMessage("message 1", System.currentTimeMillis(), person1)
+                    .addMessage("message 2", System.currentTimeMillis(), person2)
+                    .addMessage("message 3", System.currentTimeMillis(), person1)
+
+            builder.setStyle(messageStyle)
+
+
+        }
 
         if (useInboxStyle) {
             builder.setStyle(
                 NotificationCompat.InboxStyle().addLine("abx").addLine("xyz").addLine("bcd")
-                    .addLine("333").setBigContentTitle("big content title").setSummaryText("summary text")
+                    .addLine("333").setBigContentTitle("big content title")
+                    .setSummaryText("summary text")
             )
         }
 
+        val remoteView = RemoteViews(packageName, R.layout.content_view_layout)
+        remoteView.setTextViewText(R.id.title,"custom title")
+        remoteView.setTextViewText(R.id.content,"custom content")
 
+        if (useContentView) {
+            builder.setCustomContentView(remoteView)
+        }
+
+        if (useBigContentView) {
+            builder.setCustomBigContentView(remoteView)
+        }
+
+        if (useHeadsupContentView) {
+            builder.setCustomHeadsUpContentView(remoteView)
+            builder.setPriority(NotificationCompat.PRIORITY_HIGH)
+        }
 
         return builder.build()
     }
