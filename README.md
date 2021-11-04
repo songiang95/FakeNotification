@@ -3,10 +3,10 @@
 # PrivateBrowserManager
 
 ## Permission
-- android.permission.INTERNET
+- **android.permission.INTERNET**
 
 ## Constructor
-- PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
+- **PrivateBrowserManager(private val context: Context, scope: CoroutineScope)**
 
 ## Properties
 - **bookmarks: Flow<List<Bookmark>>**\
