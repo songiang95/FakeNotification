@@ -29,6 +29,7 @@ Parameters:
 ```
 - **suggestKeyword(text: String): List<String>**\
 Tìm kiếm các từ khóa được gợi ý bởi Google search
+  List<String>
   
 ```
 Parameters:
