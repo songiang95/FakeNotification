@@ -10,9 +10,10 @@
 
 ## Properties
 - bookmarks: Flow<List<Bookmark>>
+Danh sách bookmark lấy từ database
 ## Public methods
 - **addBookmark(url: String, title: String)**\
-Thêm 1 bookmark vào database\
+Thêm 1 bookmark vào database
   
 ```
 Parameters:
