@@ -11,35 +11,43 @@
 ## Properties
 
 - ```bookmarks: Flow<List<Bookmark>>```\
-  Danh sách bookmark lấy từ database
+  List bookmark
 
 ## Public methods
 
-- ```addBookmark(url: String, title: String)```\
-  Thêm 1 bookmark vào database
+- ```suspend addBookmark(url: String, title: String)```\
+  Add bookmark
     - **Parameters:**
-        - url: đường dẫn của bookmark. (vd: https://www.google.com)
-        - title: tiêu đề của bookmark.
+        - url: link of bookmark. (vd: https://www.google.com, google.com)
+        - title: title of bookmark.
 
-- ```removeBookmark(bookmark: Bookmark)```\
-  Xóa 1 bookmark khỏi database.
+- ```suspend removeBookmark(bookmark: Bookmark)```\
+  Delete bookmark
     - **Parameters:**
-        - bookmark: bookmark cần xóa.
+        - bookmark: bookmark will be deleted.
 
-- ```suggestKeyword(text: String): List<String>```\
-  Tìm kiếm các từ khóa được gợi ý bởi Google search
+- ```suspend suggestKeyword(text: String): List<String>```\
+  Search for keywords suggested by Google search
     - **Parameters:**
-        - text: từ khóa cần tìm kiếm.
+        - text: keyword to search.
     - **Return:**
-        - List\<String\>: danh sách các từ khóa được gợi ý bởi Google.
+        - List\<String\>: list of keywords suggested by Google.
 
 ## Usage Example
 
 ```kotlin
-
+//*** addBookmark
 viewModelScope.launch {
-    bookmarkMananger.addBookmark("google", "google.com")
+    //valid
+    bookmarkMananger.addBookmark("google.com", "google")
+    bookmarkMananger.addBookmark("https://www.google.com", "google")
+    
+    //invalid url format 
+    bookmarkMananger.addBookmark("google", "google")
 }
+
+
+
 
 ```
 
