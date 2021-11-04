@@ -15,6 +15,10 @@
 
 ## Public methods
 
+```kotlin
+suspend fun addBookmark(url: String, title: String)
+```
+
 - ```suspend addBookmark(url: String, title: String)```\
   Add bookmark
     - **Parameters:**
