@@ -15,7 +15,7 @@ PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
  ```kotlin
 val bookmarks: Flow<List<Bookmark>>
 ```
-  List bookmark
+List bookmark
 
 ## Public methods
 
@@ -27,17 +27,21 @@ Add bookmark
     - url: link of bookmark. (vd: https://www.google.com, google.com)
     - title: title of bookmark.
 
-- ```suspend removeBookmark(bookmark: Bookmark)```\
-  Delete bookmark
-    - **Parameters:**
-        - bookmark: bookmark will be deleted.
+```kotlin
+suspend fun removeBookmark(bookmark: Bookmark)
+```
+Delete bookmark
+- **Parameters:**
+    - bookmark: bookmark will be deleted.
 
-- ```suspend suggestKeyword(text: String): List<String>```\
-  Search for keywords suggested by Google search
-    - **Parameters:**
-        - text: keyword to search.
-    - **Return:**
-        - List\<String\>: list of keywords suggested by Google.
+```kotlin
+suspend fun suggestKeyword(text: String): List<String>
+```
+Search for keywords suggested by Google search
+- **Parameters:**
+    - text: keyword to search.
+- **Return:**
+    - List\<String\>: list of keywords suggested by Google.
 
 ## Usage Example
 
