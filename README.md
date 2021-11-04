@@ -9,7 +9,7 @@
 - PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
 
 ## Properties
-- bookmarks: Flow<List<Bookmark>>
+- **bookmarks: Flow<List<Bookmark>>**\
 Danh sách bookmark lấy từ database
 ## Public methods
 - **addBookmark(url: String, title: String)**\
