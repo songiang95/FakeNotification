@@ -15,7 +15,7 @@ PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
  ```kotlin
 val bookmarks: Flow<List<Bookmark>>
 ```
-List bookmark
+Bookmark list
 
 ## Public methods
 
