@@ -56,6 +56,9 @@ viewModelScope.launch {
 viewModelScope.launch {
     //valid
     val searchResult = bookmarkMananger.suggestKeyword("thoi tiet")
+    
+    //invalid blank keyword
+    val searchResult = bookmarkMananger.suggestKeyword("      ")
 }
 
 ```
