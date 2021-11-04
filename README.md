@@ -7,7 +7,7 @@
 ## Constructor
 
 ```kotlin
-PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
+PrivateBrowserManager(private val context : Context, scope: CoroutineScope)
 ```
 
 ## Properties
@@ -15,6 +15,7 @@ PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
  ```kotlin
 val bookmarks: Flow<List<Bookmark>>
 ```
+
 Bookmark list
 
 ## Public methods
@@ -22,22 +23,32 @@ Bookmark list
 ```kotlin
 suspend fun addBookmark(url: String, title: String)
 ```
+
 Add a bookmark
+
 - **Parameters:**
     - url: link of bookmark. (eg: https://www.google.com, google.com)
     - title: title of bookmark.
+
 ##
+
 ```kotlin
 suspend fun removeBookmark(bookmark: Bookmark)
 ```
+
 Delete a bookmark
+
 - **Parameters:**
     - bookmark: bookmark will be deleted.
+
 ##
+
 ```kotlin
 suspend fun suggestKeyword(text: String): List<String>
 ```
+
 Search for keywords suggested by Google search
+
 - **Parameters:**
     - text: keyword to search.
 - **Return:**
@@ -51,7 +62,7 @@ viewModelScope.launch {
     //valid
     bookmarkMananger.addBookmark("google.com", "google")
     bookmarkMananger.addBookmark("https://www.google.com", "google")
-    
+
     //invalid url format 
     bookmarkMananger.addBookmark("google", "google")
 }
@@ -66,9 +77,16 @@ viewModelScope.launch {
 viewModelScope.launch {
     //valid
     val searchResult = bookmarkMananger.suggestKeyword("thoi tiet")
-    
+
     //invalid blank keyword
     val searchResult = bookmarkMananger.suggestKeyword("      ")
+}
+
+viewModelScope.launch {
+    bookmarks.collect { bookmarkList ->
+      
+
+    }
 }
 
 ```
