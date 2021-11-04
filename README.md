@@ -69,23 +69,19 @@ viewModelScope.launch {
 
 //*** remove bookmark
 viewModelScope.launch {
-    //valid
     bookmarkMananger.removeBookmark(deleteBookmark)
 }
 
 //*** search keyword
 viewModelScope.launch {
-    //valid
     val searchResult = bookmarkMananger.suggestKeyword("thoi tiet")
-
-    //invalid blank keyword
-    val searchResult = bookmarkMananger.suggestKeyword("      ")
+  
+    //searchResult("thoi tiet hanoi", "thoi tiet saigon", "thoi tiet hom nay",...)
 }
 
 viewModelScope.launch {
     bookmarks.collect { bookmarkList ->
-      
-
+      //convert to BookmarkModel
     }
 }
 
