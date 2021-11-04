@@ -30,7 +30,7 @@ Xóa 1 bookmark khỏi database.
 Tìm kiếm các từ khóa được gợi ý bởi Google search
   
 ```
-Parameters:
+**Parameters:**
     text: từ khóa cần tìm kiếm.
     
 Return:
