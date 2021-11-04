@@ -11,6 +11,9 @@
 ## Properties
 
 - ```bookmarks: Flow<List<Bookmark>>```\
+ ```kotlin
+val bookmarks: Flow<List<Bookmark>>
+```
   List bookmark
 
 ## Public methods
@@ -18,8 +21,6 @@
 ```kotlin
 suspend fun addBookmark(url: String, title: String)
 ```
-
-- ```suspend addBookmark(url: String, title: String)```\
   Add bookmark
     - **Parameters:**
         - url: link of bookmark. (vd: https://www.google.com, google.com)
