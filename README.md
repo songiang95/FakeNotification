@@ -10,7 +10,6 @@
 
 ## Properties
 
-- ```bookmarks: Flow<List<Bookmark>>```\
  ```kotlin
 val bookmarks: Flow<List<Bookmark>>
 ```
@@ -21,10 +20,10 @@ val bookmarks: Flow<List<Bookmark>>
 ```kotlin
 suspend fun addBookmark(url: String, title: String)
 ```
-  Add bookmark\
-    - **Parameters:**
-        - url: link of bookmark. (vd: https://www.google.com, google.com)
-        - title: title of bookmark.
+Add bookmark
+- **Parameters:**
+    - url: link of bookmark. (vd: https://www.google.com, google.com)
+    - title: title of bookmark.
 
 - ```suspend removeBookmark(bookmark: Bookmark)```\
   Delete bookmark
