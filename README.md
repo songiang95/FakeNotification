@@ -36,7 +36,8 @@
 ## Usage Example
 
 ```kotlin
-//*** addBookmark
+//*** add bookmark
+
 viewModelScope.launch {
     //valid
     bookmarkMananger.addBookmark("google.com", "google")
@@ -46,6 +47,13 @@ viewModelScope.launch {
     bookmarkMananger.addBookmark("google", "google")
 }
 
+
+//*** remove bookmark
+
+viewModelScope.launch {
+    //valid
+    bookmarkMananger.removeBookmark(deleteBookmark)
+}
 
 
 
