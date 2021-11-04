@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     ): Notification {
         val builder = NotificationCompat.Builder(this, channel_id)
             .setSmallIcon(R.drawable.ic_baseline_directions_car_24)
-            .setContentTitle(title)
+//            .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -178,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                     .addMessage("message 1", System.currentTimeMillis(), person1)
                     .addMessage("message 2", System.currentTimeMillis(), person2)
                     .addMessage("message 3", System.currentTimeMillis(), person1)
+                    .addMessage("message 4", System.currentTimeMillis(), person2)
 
             builder.setStyle(messageStyle)
 
