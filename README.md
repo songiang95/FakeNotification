@@ -52,8 +52,10 @@ viewModelScope.launch {
     bookmarkMananger.removeBookmark(deleteBookmark)
 }
 
-
+//*** search keyword
+viewModelScope.launch {
+    //valid
+    val searchResult = bookmarkMananger.suggestKeyword("thoi tiet")
+}
 
 ```
-
-
