@@ -80,7 +80,9 @@ viewModelScope.launch {
 }
 
 viewModelScope.launch {
-    bookmarks.collect { bookmarkList ->
+    bookmarks.collect { result ->
+      //result("thoi tiet hanoi", "thoi tiet saigon", "thoi tiet hom nay",...)
+      
       //convert to BookmarkModel
     }
 }
