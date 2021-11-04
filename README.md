@@ -6,7 +6,9 @@
 
 ## Constructor
 
-- ```PrivateBrowserManager(private val context: Context, scope: CoroutineScope)```
+```kotlin
+class PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
+```
 
 ## Properties
 
