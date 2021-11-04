@@ -13,7 +13,7 @@
 ## Public methods:
 - **addBookmark(url: String, title: String)**\
 Thêm 1 bookmark vào database
-+ Parameters:
+-- Parameters:
 ```
 url: đường dẫn của bookmark. (vd: https://www.google.com)
 title: tiêu đề của bookmark.
