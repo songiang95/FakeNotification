@@ -33,7 +33,7 @@ suspend fun removeBookmark(bookmark: Bookmark)
 Delete a bookmark
 - **Parameters:**
     - bookmark: bookmark will be deleted.
-
+##
 ```kotlin
 suspend fun suggestKeyword(text: String): List<String>
 ```
