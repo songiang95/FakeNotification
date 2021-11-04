@@ -31,7 +31,7 @@
     - **Parameters:**
         - text: từ khóa cần tìm kiếm.
     - **Return:**
-        - List<String>: danh sách các từ khóa được gợi ý bởi Google.
+        - List\<String\>: danh sách các từ khóa được gợi ý bởi Google.
 
 
 
