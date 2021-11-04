@@ -22,7 +22,7 @@ Bookmark list
 ```kotlin
 suspend fun addBookmark(url: String, title: String)
 ```
-Add bookmark
+Add a bookmark
 - **Parameters:**
     - url: link of bookmark. (eg: https://www.google.com, google.com)
     - title: title of bookmark.
@@ -30,7 +30,7 @@ Add bookmark
 ```kotlin
 suspend fun removeBookmark(bookmark: Bookmark)
 ```
-Delete bookmark
+Delete a bookmark
 - **Parameters:**
     - bookmark: bookmark will be deleted.
 
