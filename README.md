@@ -16,9 +16,9 @@ Danh sách bookmark lấy từ database
 ## Public methods
 - ```addBookmark(url: String, title: String)```\
 Thêm 1 bookmark vào database
-- Sub Parameters:\
--- url: đường dẫn của bookmark. (vd: https://www.google.com)\
---title: tiêu đề của bookmark.
+    - Parameters:\
+        - url: đường dẫn của bookmark. (vd: https://www.google.com)\
+        -title: tiêu đề của bookmark.
 
 
 - ```removeBookmark(bookmark: Bookmark)```\
