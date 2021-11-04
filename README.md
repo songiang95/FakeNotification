@@ -1,6 +1,6 @@
 # PrivateBrowserManager
 
-## Permission
+## Permissions
 
 - **android.permission.INTERNET**
 
