@@ -24,7 +24,7 @@ suspend fun addBookmark(url: String, title: String)
 ```
 Add bookmark
 - **Parameters:**
-    - url: link of bookmark. (vd: https://www.google.com, google.com)
+    - url: link of bookmark. (eg: https://www.google.com, google.com)
     - title: title of bookmark.
 
 ```kotlin
