@@ -11,7 +11,7 @@
 ## Properties:
 - bookmarks: Flow<List<Bookmark>>
 ## Public methods:
-- **addBookmark(url: String, title: String)**
+- **addBookmark(url: String, title: String)**\
 Thêm 1 bookmark vào database
 + Parameters:
 ```
