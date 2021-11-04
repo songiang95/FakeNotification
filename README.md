@@ -27,7 +27,7 @@ suspend fun addBookmark(url: String, title: String)
 Add a bookmark
 
 - **Parameters:**
-    - url: link of bookmark. (eg: https://www.google.com, google.com)
+    - url: link of bookmark. (ex: https://www.google.com, google.com)
     - title: title of bookmark.
 
 ##
@@ -76,12 +76,12 @@ viewModelScope.launch {
 viewModelScope.launch {
     val searchResult = bookmarkMananger.suggestKeyword("thoi tiet")
   
-    //searchResult("thoi tiet hanoi", "thoi tiet saigon", "thoi tiet hom nay",...)
+    //searchResult["thoi tiet hanoi", "thoi tiet saigon", "thoi tiet hom nay",...]
 }
 
 viewModelScope.launch {
     bookmarks.collect { result ->
-      //result("thoi tiet hanoi", "thoi tiet saigon", "thoi tiet hom nay",...)
+      //result["thoi tiet hanoi", "thoi tiet saigon", "thoi tiet hom nay",...]
       
       //convert to BookmarkModel
     }
