@@ -3,7 +3,7 @@
 # PrivateBrowserManager
 
 ## Permission
-android.permission.INTERNET
+- android.permission.INTERNET
 
 ## Constructor
 - PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
