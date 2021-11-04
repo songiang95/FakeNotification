@@ -26,7 +26,7 @@ Add a bookmark
 - **Parameters:**
     - url: link of bookmark. (eg: https://www.google.com, google.com)
     - title: title of bookmark.
-
+##
 ```kotlin
 suspend fun removeBookmark(bookmark: Bookmark)
 ```
