@@ -1,9 +1,7 @@
-# PrivateBrowserManager
-
-## Permissions
-
+# Permissions
 - **android.permission.INTERNET**
 
+# PrivateBrowserManager
 ## Constructor
 
 ```kotlin
@@ -54,7 +52,7 @@ Search for keywords suggested by Google search
 - **Return:**
     - List\<String\>: list of keywords suggested by Google.
 
-## Usage Example
+# Usage Example
 
 ```kotlin
 //*** add bookmark
