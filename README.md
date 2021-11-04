@@ -8,9 +8,9 @@
 ## Constructor
 - PrivateBrowserManager(private val context: Context, scope: CoroutineScope)
 
-## Properties:
+## Properties
 - bookmarks: Flow<List<Bookmark>>
-## Public methods:
+## Public methods
 - **addBookmark(url: String, title: String)**\
 Thêm 1 bookmark vào database\
   
@@ -23,18 +23,18 @@ Parameters:
 - **removeBookmark(bookmark: Bookmark)**\
 Xóa 1 bookmark khỏi database.
 ```
-<b>Parameters:</b>
+Parameters:
     bookmark: bookmark cần xóa.
 ```
 - **suggestKeyword(text: String): List<String>**\
 Tìm kiếm các từ khóa được gợi ý bởi Google search
   
 ```
-**Parameters:**
+Parameters:
     text: từ khóa cần tìm kiếm.
     
 Return:
-List<String>: danh sách các từ khóa được gợi ý bởi Google.
+    List<String>: danh sách các từ khóa được gợi ý bởi Google.
 ```
 
 
