@@ -21,7 +21,7 @@ val bookmarks: Flow<List<Bookmark>>
 ```kotlin
 suspend fun addBookmark(url: String, title: String)
 ```
-  Add bookmark
+  Add bookmark\
     - **Parameters:**
         - url: link of bookmark. (vd: https://www.google.com, google.com)
         - title: title of bookmark.
