@@ -16,22 +16,23 @@ Thêm 1 bookmark vào database\
   
 ```
 Parameters:
-url: đường dẫn của bookmark. (vd: https://www.google.com)
-title: tiêu đề của bookmark.
+    url: đường dẫn của bookmark. (vd: https://www.google.com)
+    title: tiêu đề của bookmark.
 ```
 
 - **removeBookmark(bookmark: Bookmark)**\
 Xóa 1 bookmark khỏi database.
 ```
-Parameters:
-bookmark: bookmark cần xóa.
+<b>Parameters:</b>
+    bookmark: bookmark cần xóa.
 ```
 - **suggestKeyword(text: String): List<String>**\
 Tìm kiếm các từ khóa được gợi ý bởi Google search
   
 ```
 Parameters:
-text: từ khóa cần tìm kiếm.
+    text: từ khóa cần tìm kiếm.
+    
 Return:
 List<String>: danh sách các từ khóa được gợi ý bởi Google.
 ```
