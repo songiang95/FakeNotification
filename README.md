@@ -1,188 +1,79 @@
-# Permission
+# Permissions
 
+- **android.permission.REQUEST_DELETE_PACKAGES**
 - **android.permission.GET_PACKAGE_SIZE**
 - **android.permission.PACKAGE_USAGE_STATS**
-- **android.permission.REQUEST_INSTALL_PACKAGES**
-- **android.permission.REQUEST_DELETE_PACKAGES**
-- **android.permission.READ_EXTERNAL_STORAGE**
 
-```kotlin
-//check usage stat permission
-fun hasUsageStatPermission(context: Context): Boolean {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-    val mode =
-      appOps.checkOpNoThrow(
-        AppOpsManager.OPSTR_GET_USAGE_STATS,
-        Process.myUid(),
-        context.packageName
-      )
-    return mode == AppOpsManager.MODE_ALLOWED
-  }
-
-  return true
-}
-
-//request usage stat permission
-fun requestUsageStatPermission(context: Context) {
-  val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-  context.startActivity(intent)
-}
-
-```
-
-# InstalledAppManager
+# BigFileManager
 
 ## Constructor
 
-````kotlin
-InstalledAppManager(private val context: Context, private val scope: CoroutineScope)
-````
+```kotlin
+BigFileManager(private val scope : CoroutineScope,
+private val application: Application)
+```
 
 ## Properties
 
 ```kotlin
-val appFiles: Flow<List<AppFile>>
+val bigFile: Flow<ResultOrProgress<List<BigFile>, Int>>
 ```
 
-All apps installed in the phone
+Return scanning big files progress or big file list
 
 ## Public methods
 
 ```kotlin
-suspend fun clean(activity: AppCompatActivity, ids: List<String>)
+suspend fun clean(activity: AppCompatActivity, bigFiles: List<BigFile>)
 ```
 
-Remove apps from the phone
+Clean big files
 
 - **Parameter:**
   - activity: the current visible Activity
-  - ids: list package name of the apps that will be removed.
+  - bigFiles: big file list that will be cleaned
 
-## Usage Example
+# Enum Type
+
+Type of big file
 
 ```kotlin
-//installed apps
+enum class Type {
+    APP,
+    VIDEO,
+    PHOTO,
+    AUDIO,
+    DOCUMENT,
+    OTHER_FILE
+}
+```
+
+- APP: Big application(ex: Chrome, Facebook, Youtube,...).
+- VIDEO: Big video file, files has extension: 3gp, mp4, mkv, webm.
+- PHOTO: Big image file, file has extension: bmp, gif, jpg, png, jpeg, webp, heic, heif.
+- AUDIO: Big audio file, file has extension: ogg, m4a, mp3, imy, ota, flac, amr,...
+- DOCUMENT: Big document file, file has extension: txt, pdf, doc, docx, xls, xlsx, ppt, pptx.
+- OTHER_FILE: Big other file, file that has extension not match any case above.
+
+# Usage Example
+
+```kotlin
+// scan big files & get big file list
 viewModelScope.launch {
-    installedAppManager.appFiles.collect { appFiles ->
-        //convert to InstalledAppModel
+  //BigFileManager will start scan when collect bigFile Flow
+  bigFileManager.bigFile.collect { resultOrProgress ->
+    if (resultOrProgress is ResultOrProgress.Result) {
+      val bigFiles = resultOrProgress.result
+      //bigFiles: [BigFile(id=1, type=Type.APP,...), BigFile(id=2, type=Type.VIDEO,...), BigFile(id=3, type=Type.PHOTO,...)]
+      //update result
+    } else {
+      val progress = (resultOrProgress as ResultOrProgress.Progress).progress
+      //progress: 10
+      //update scanning progress
     }
-}
-
-//remove apps
-viewModelScope.launch {
-    installedAppManager.clean(activity, ids)
-    //ids: ["com.android.sms","com.android.chrome",...]
-}
-
-```
-
-# CacheAppManager
-
-## Constructor
-
-```kotlin
-CacheAppManager(private val context: Context, private val scope: CoroutineScope)
-```
-
-## Properties
-
-```kotlin
-val appFiles: Flow<List<AppFile>>
-```
-
-All apps have uncleaned cache
-
-## Public methods
-
-```kotlin
-suspend fun clean(activity: AppCompatActivity, ids: List<String>)
-
-```
-
-Clear apps cache
-
-- **Parameter:**
-  - activity: the current visible Activity
-  - ids: list package name of the apps that cache will be cleaned.
-
-## Usage Example
-
-```kotlin
-// apps cache
-viewModelScope.launch {
-    appCacheManager.appFiles.collect { appsCache ->
-        //convert to AppCacheModel
-    }
-}
-
-//clear cache
-viewModelScope.launch {
-    appCacheManager.clean(activity, ids)
-    //ids: ["com.android.sms","com.android.chrome",...]
-}
-```
-
-# ApkFileManager
-
-## Constructor
-
-```kotlin
-ApkFileManager(private val context: Context, private val scope: CoroutineScope)
-```
-
-## Properties
-
-```kotlin
-val appFiles: Flow<List<AppFile>>
-```
-
-List file apk in storage
-
-## Public methods
-
-```kotlin
-static suspend fun installApks(activity: AppCompatActivity, paths: List<String>)
-```
-
-Install apps by apk files
-
-- **Parameter:**
-  - activity: the current visible Activity
-  - ids: list path of the apk files that will be installed.
-
-##
-
-```kotlin
-suspend fun clean(activity: AppCompatActivity, paths: List<String>)
-```
-
-Delete apk file from storage.
-
-- **Parameter:**
-  - activity: the current visible Activity
-  - ids: list path of the apk files that will be deleted.
-
-## Usage Example
-
-```kotlin
-// apk files
-viewModelScope.launch {
-  apkFileManager.appFiles.collect { apkFiles ->
-    //convert to ApkFileModel
   }
 }
 
-//install apps
-viewModelScope.launch {
-  ApkFileUtils.installApks(activity, paths)
-  //paths: ["download/youtube.apk",...]
-}
 
-//delete apk files
-viewModelScope.launch {
-  apkFileManager.clean(activity, paths)
-  //paths: ["download/youtube.apk",...]
-}
 
 ```
