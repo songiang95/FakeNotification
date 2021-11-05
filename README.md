@@ -48,11 +48,15 @@ static fun start(context: Context)
 
 Start Notification listener service when the service not auto start
 
+##
+
 ```kotlin
 static fun stop()
 ```
 
 Stop lock notifications
+
+##
 
 ```kotlin
 suspend fun addIgnoreApp(pkgName: String)
@@ -185,3 +189,4 @@ if (hasPermission && lock_notification_disable) {
 }
 
 ```
+
