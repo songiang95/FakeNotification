@@ -33,7 +33,7 @@ Clean big files
   - activity: the current visible Activity
   - bigFiles: big file list that will be cleaned
 
-# Enum Type
+## Enum Type
 
 Type of big file
 
@@ -48,7 +48,7 @@ enum class Type {
 }
 ```
 
-- APP: Big application(ex: Chrome, Facebook, Youtube,...).
+- APP: Big application (ex: Chrome, Facebook, Youtube,...).
 - VIDEO: Big video file, files has extension: 3gp, mp4, mkv, webm.
 - PHOTO: Big image file, file has extension: bmp, gif, jpg, png, jpeg, webp, heic, heif.
 - AUDIO: Big audio file, file has extension: ogg, m4a, mp3, imy, ota, flac, amr,...
@@ -60,7 +60,7 @@ enum class Type {
 ```kotlin
 // scan big files & get big file list
 viewModelScope.launch {
-  //BigFileManager will start scan when collect bigFile Flow
+  //BigFileManager will start scanning when collect bigFile Flow
   bigFileManager.bigFile.collect { resultOrProgress ->
     if (resultOrProgress is ResultOrProgress.Result) {
       val bigFiles = resultOrProgress.result
