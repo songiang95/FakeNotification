@@ -145,6 +145,16 @@ List file apk in storage
 ## Public methods
 
 ```kotlin
+static suspend fun installApks(activity: AppCompatActivity, paths: List<String>)
+```
+
+Install apps by apk files
+
+- **Parameter:**
+  - activity: the current visible Activity
+  - ids: list path of the apk files that will be installed.
+
+```kotlin
 suspend fun clean(activity: AppCompatActivity, paths: List<String>)
 ```
 
@@ -166,7 +176,7 @@ viewModelScope.launch {
 
 //install apps
 viewModelScope.launch {
-  apkFileManager.install(activity, paths)
+  ApkFileUtils.installApks(activity, paths)
   //paths: ["download/youtube.apk",...]
 }
 
