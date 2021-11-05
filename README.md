@@ -151,6 +151,8 @@ Install apps by apk files
   - activity: the current visible Activity
   - ids: list path of the apk files that will be installed.
 
+##
+
 ```kotlin
 suspend fun clean(activity: AppCompatActivity, paths: List<String>)
 ```
