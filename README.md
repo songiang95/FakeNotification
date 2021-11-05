@@ -60,6 +60,24 @@ Remove apps from the phone
   - activity: the current visible Activity
   - ids: list package name of the apps that will be removed.
 
+## Usage Example
+
+```kotlin
+//installed apps
+viewModelScope.launch {
+    installedAppManager.appFiles.collect { appFiles ->
+        //convert to InstalledAppModel
+    }
+}
+
+//remove apps
+viewModelScope.launch {
+    //ids: ["com.android.sms","com.android.chrome",...]
+    installedAppManager.clean(activity, ids)
+}
+
+```
+
 # CacheAppManager
 
 ## Constructor
@@ -90,6 +108,23 @@ Clear apps cache
   - activity: the current visible Activity
   - ids: list package name of the apps that cache will be cleaned.
 
+## Usage Example
+
+```kotlin
+// apps cache
+viewModelScope.launch {
+    appCacheManager.appFiles.collect { appsCache ->
+        //convert to AppCacheModel
+    }
+}
+
+//clear cache
+viewModelScope.launch {
+    //ids: ["com.android.sms","com.android.chrome",...]
+    appCacheManager.clean(activity, ids)
+}
+```
+
 # ApkFileManager
 
 ## Constructor
@@ -119,23 +154,9 @@ Delete apk file from storage.
   - activity: the current visible Activity
   - ids: list path of the apk files that will be deleted.
 
-# Usage Example
+## Usage Example
 
 ```kotlin
-//installed apps
-viewModelScope.launch {
-  installedAppManager.appFiles.collect { appFiles ->
-    //convert to InstalledAppModel
-  }
-}
-
-// apps cache
-viewModelScope.launch {
-  appCacheManager.appFiles.collect { appsCache ->
-    //convert to AppCacheModel
-  }
-}
-
 // apk files
 viewModelScope.launch {
   apkFileManager.appFiles.collect { apkFiles ->
@@ -143,22 +164,10 @@ viewModelScope.launch {
   }
 }
 
-//remove apps
-viewModelScope.launch {
-  //ids: ["com.android.sms","com.android.chrome",...]
-  installedAppManager.clean(activity, ids)
-}
-
 //install apps
 viewModelScope.launch {
   //paths: ["download/youtube.apk",...]
   apkFileManager.install(activity, paths)
-}
-
-//clear cache
-viewModelScope.launch {
-  //ids: ["com.android.sms","com.android.chrome",...]
-  appCacheManager.clean(activity, ids)
 }
 
 //delete apk files
