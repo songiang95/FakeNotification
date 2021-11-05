@@ -72,8 +72,8 @@ viewModelScope.launch {
 
 //remove apps
 viewModelScope.launch {
-    //ids: ["com.android.sms","com.android.chrome",...]
     installedAppManager.clean(activity, ids)
+    //ids: ["com.android.sms","com.android.chrome",...]
 }
 
 ```
@@ -120,8 +120,8 @@ viewModelScope.launch {
 
 //clear cache
 viewModelScope.launch {
-    //ids: ["com.android.sms","com.android.chrome",...]
     appCacheManager.clean(activity, ids)
+    //ids: ["com.android.sms","com.android.chrome",...]
 }
 ```
 
@@ -166,14 +166,14 @@ viewModelScope.launch {
 
 //install apps
 viewModelScope.launch {
-  //paths: ["download/youtube.apk",...]
   apkFileManager.install(activity, paths)
+  //paths: ["download/youtube.apk",...]
 }
 
 //delete apk files
 viewModelScope.launch {
-  //paths: ["download/youtube.apk",...]
   apkFileManager.clean(activity, paths)
+  //paths: ["download/youtube.apk",...]
 }
 
 ```
