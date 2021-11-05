@@ -36,8 +36,7 @@ fun requestUsageStatPermission(context: Context) {
 ## Constructor
 
 ````kotlin
-InstalledAppManager(private val context : Context,
-private val scope: CoroutineScope)
+InstalledAppManager(private val context: Context, private val scope: CoroutineScope)
 ````
 
 ## Properties
@@ -83,8 +82,7 @@ viewModelScope.launch {
 ## Constructor
 
 ```kotlin
-CacheAppManager(private val context : Context,
-private val scope: CoroutineScope)
+CacheAppManager(private val context: Context, private val scope: CoroutineScope)
 ```
 
 ## Properties
@@ -130,8 +128,7 @@ viewModelScope.launch {
 ## Constructor
 
 ```kotlin
-ApkFileManager(private val context : Context,
-private val scope: CoroutineScope)
+ApkFileManager(private val context: Context, private val scope: CoroutineScope)
 ```
 
 ## Properties
