@@ -4,13 +4,40 @@
 - **android.permission.PACKAGE_USAGE_STATS**
 - **android.permission.REQUEST_INSTALL_PACKAGES**
 - **android.permission.REQUEST_DELETE_PACKAGES**
+- **android.permission.READ_EXTERNAL_STORAGE**
+
+```kotlin
+//check usage stat permission
+fun hasUsageStatPermission(context: Context): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode =
+            appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                context.packageName
+            )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
+    return true
+}
+
+//request usage stat permission
+fun requestUsageStatPermission(context: Context) {
+    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+    context.startActivity(intent)
+}
+
+```
 
 # InstalledAppManager
 
 ## Constructor
 
 ````kotlin
-InstalledAppManager(private val context : Context, private val scope: CoroutineScope)
+InstalledAppManager(private val context : Context,
+private val scope: CoroutineScope)
 ````
 
 ## Properties
@@ -30,7 +57,7 @@ suspend fun clean(activity: AppCompatActivity, ids: List<String>)
 Remove apps from the phone
 
 - **Parameter:**
-  - activity:
+  - activity: the current visible Activity
   - ids: list package name of the apps that will be removed.
 
 # CacheAppManager
@@ -38,7 +65,8 @@ Remove apps from the phone
 ## Constructor
 
 ```kotlin
-CacheAppManager(private val context : Context, private val scope: CoroutineScope)
+CacheAppManager(private val context : Context,
+private val scope: CoroutineScope)
 ```
 
 ## Properties
@@ -59,7 +87,7 @@ suspend fun clean(activity: AppCompatActivity, ids: List<String>)
 Clear apps cache
 
 - **Parameter:**
-  - activity:
+  - activity: the current visible Activity
   - ids: list package name of the apps that cache will be cleaned.
 
 # ApkFileManager
@@ -67,7 +95,8 @@ Clear apps cache
 ## Constructor
 
 ```kotlin
-ApkFileManager(private val context : Context, private val scope: CoroutineScope)
+ApkFileManager(private val context : Context,
+private val scope: CoroutineScope)
 ```
 
 ## Properties
@@ -87,7 +116,31 @@ suspend fun clean(activity: AppCompatActivity, paths: List<String>)
 Delete apk file from storage.
 
 - **Parameter:**
-  - activity:
-  - ids: list file path of the apk files that will be deleted.
+  - activity: the current visible Activity
+  - ids: list path of the apk files that will be deleted.
 
 # Usage Example
+
+```kotlin
+//installed apps
+viewModelScope.launch {
+    installedAppManager.appFiles.collect { appFiles ->
+        //convert to InstalledAppModel
+    }
+}
+
+// apps cache
+viewModelScope.launch {
+    appCacheManager.appFiles.collect { appsCache ->
+        //convert to AppCacheModel
+    }
+}
+
+// apk files
+viewModelScope.launch {
+    apkFileManager.appFiles.collect { apkFiles ->
+        //convert to ApkFileModel
+    }
+}
+
+```
