@@ -9,24 +9,24 @@
 ```kotlin
 //check usage stat permission
 fun hasUsageStatPermission(context: Context): Boolean {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode =
-            appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName
-            )
-        return mode == AppOpsManager.MODE_ALLOWED
-    }
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+    val mode =
+      appOps.checkOpNoThrow(
+        AppOpsManager.OPSTR_GET_USAGE_STATS,
+        Process.myUid(),
+        context.packageName
+      )
+    return mode == AppOpsManager.MODE_ALLOWED
+  }
 
-    return true
+  return true
 }
 
 //request usage stat permission
 fun requestUsageStatPermission(context: Context) {
-    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-    context.startActivity(intent)
+  val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+  context.startActivity(intent)
 }
 
 ```
@@ -124,23 +124,47 @@ Delete apk file from storage.
 ```kotlin
 //installed apps
 viewModelScope.launch {
-    installedAppManager.appFiles.collect { appFiles ->
-        //convert to InstalledAppModel
-    }
+  installedAppManager.appFiles.collect { appFiles ->
+    //convert to InstalledAppModel
+  }
 }
 
 // apps cache
 viewModelScope.launch {
-    appCacheManager.appFiles.collect { appsCache ->
-        //convert to AppCacheModel
-    }
+  appCacheManager.appFiles.collect { appsCache ->
+    //convert to AppCacheModel
+  }
 }
 
 // apk files
 viewModelScope.launch {
-    apkFileManager.appFiles.collect { apkFiles ->
-        //convert to ApkFileModel
-    }
+  apkFileManager.appFiles.collect { apkFiles ->
+    //convert to ApkFileModel
+  }
+}
+
+//remove apps
+viewModelScope.launch {
+  //ids: ["com.android.sms","com.android.chrome",...]
+  installedAppManager.clean(activity, ids)
+}
+
+//install apps
+viewModelScope.launch {
+  //paths: ["download/youtube.apk",...]
+  apkFileManager.install(activity, paths)
+}
+
+//clear cache
+viewModelScope.launch {
+  //ids: ["com.android.sms","com.android.chrome",...]
+  appCacheManager.clean(activity, ids)
+}
+
+//delete apk files
+viewModelScope.launch {
+  //paths: ["download/youtube.apk",...]
+  apkFileManager.clean(activity, paths)
 }
 
 ```
