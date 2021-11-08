@@ -1,98 +1,134 @@
 # Permissions
 
-- **android.permission.INTERNET**
-- **android.permission.ACCESS_WIFI_STATE**
-- **android.permission.CHANGE_WIFI_STATE**
-- **android.permission.ACCESS_NETWORK_STATE**
-- **android.permission.ACCESS_COARSE_LOCATION**
-- **android.permission.ACCESS_FINE_LOCATION**
+- **android.permission.GET_PACKAGE_SIZE**
+- **android.permission.PACKAGE_USAGE_STATS**
+- **android.permission.READ_EXTERNAL_STORAGE**
 
-# WifiSecurity
+```kotlin
+//check usage stat permission
+fun hasUsageStatPermission(context: Context): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode =
+            appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                context.packageName
+            )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
+    return true
+}
+
+//request usage stat permission
+fun requestUsageStatPermission(context: Context) {
+    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+    context.startActivity(intent)
+}
+```
+
+# JunkManager
 
 ## Constructor
 
 ```kotlin
-WifiSecurity(context: Context, val scope : CoroutineScope)
+JunkManager(private val application : Application,
+private val scope: CoroutineScope)
 ```
 
-## Public methods
+## Properties
 
 ```kotlin
-fun scan() = flowProgress<List<WifiIssue>, WifiScanningState>
+val ignoringList: Flow<List<JunkInfo>>
 ```
 
-- **Return:**
-  - Flow<ResultOrProgress<List\<WifiIssue\>, WifiScanningState>>: flow of wifi scanning state or
-    list of wifi issues
+List junk has been ignored.
 
 ##
 
 ```kotlin
-static fun findCurrentWifi(context: Context): MyWifiInfo?
+val junkInfos: Flow<ResultOrProgress<List<JunkInfo>, JunkScanningInfo>>
 ```
 
-Find current connected wifi
+Flow of scanning junks progress or list junk was found after scan
+
+## Public methods
+
+```kotlin
+suspend fun clean(junks: List<JunkInfo>, progress: (Int) -> Unit)
+```
+
+Clean junks and update clean progress
 
 - **Parameters:**
-  - context: any context.
-- **Return:**
-  - MyWifiInfo: the current connected wifi, if null then wifi is not connected yet.
+  - junks: List junk will be deleted.
+  - progress: function to update clean progress.
 
-## Enum ScanningType
-
-```kotlin
-enum class ScanningType {
-    DNS,
-    SSL,
-    ARP,
-    ENCRYPTION
-}
-```
-
-## Enum IssueCode
+##
 
 ```kotlin
-enum class IssueCode {
-    NO_INTERNET,
-    ARP_DUPLICATE_MAC,
-    SSL_MITM,
-    DNS_INVALID,
-    WIFI_NO_PASSWORD,
-}
+suspend fun addIgnoring(junkInfos: List<JunkInfo>)
 ```
+
+Add list of junk to ignore list
+
+- **Parameter:**
+  - junkInfos: list of junk will be ignored.
+
+##
+
+```kotlin
+suspend fun removeIgnoring(ids: List<String>) 
+```
+
+Remove list of junk from ignore list
+
+- **Parameters:**
+  - ids: list id of junks that will be removed from ignore list
 
 # Usage Example
 
 ```kotlin
-//find current connected wifi. Check wifi is connected or not before scan wifi.
-val myWifiInfo = Utils.findCurrentWifi(context)
-val isWifiConnected = myWifiInfo != null
-if (isWifiConnected) {
-  //start scan wifi
-} else {
-  //turn on wifi
-}
-
-// scan wifi & get scan result
+//scan & get list of junks
 viewModelScope.launch {
-  wifiScanner.scan().collect {
+  // JunkManager will start scan junks when start collect junkInfos flow
+  junkManager.junkInfos.collect {
     if (it is ResultOrProgress.Progress) {
       val progress = it.progress
       //update scanning progress
-
-      if (progress is WifiScanning) {
-        //wifi is scanning
-        //progress: WifiScanning(type = ScanningType.DNS)
-      } else if (progress is WifiScanningDone) {
-        //wifi is scan done
-        //progress: WifiScanningDone(type = ScanningType.DNS, issue = null)
-      }
-
     } else {
-      val wifiIssues = (it as ResultOrProgress.Result).result
-      // update wifi scan result
+      val result = (it as ResultOrProgress.Result).result
+      //update scan result
     }
   }
+}
+
+//get ignore junks
+viewModelScope.launch {
+  junkManager.ignoringList.collect { ignoreList ->
+    //ignoreList: [JunkInfo(id=com.android.youtube), JunkInfo(id=/download/temp.doc),...]
+  }
+}
+
+//clean junks
+viewModelScope.launch {
+  //junks: [JunkInfo(id=com.android.youtube), JunkInfo(id=/download/temp.doc),...]
+  junkManager.clean(junks) { cleanProgress ->
+    //update clean progress
+  }
+}
+
+//add junks to ignore list
+viewModelScope.launch {
+  //junks: [JunkInfo(id=com.android.youtube), JunkInfo(id=/download/temp.doc),...]
+  junkManager.addIgnoring(junks)
+}
+
+//remove junks from ignore list
+viewModelScope.launch {
+  //ids: ["com.android.sms", "download/temp.doc"]
+  junkManager.removeIgnoring(ids)
 }
 
 ```
