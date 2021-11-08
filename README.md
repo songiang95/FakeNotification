@@ -4,6 +4,30 @@
 - **android.permission.GET_PACKAGE_SIZE**
 - **android.permission.PACKAGE_USAGE_STATS**
 
+```kotlin
+//check usage stat permission
+fun hasUsageStatPermission(context: Context): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode =
+            appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                Process.myUid(),
+                context.packageName
+            )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
+    return true
+}
+
+//request usage stat permission
+fun requestUsageStatPermission(context: Context) {
+    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+    context.startActivity(intent)
+}
+```
+
 # BigFileManager
 
 ## Constructor
