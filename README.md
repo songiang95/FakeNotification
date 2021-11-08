@@ -2,8 +2,73 @@
 
 - **android.permission.GET_PACKAGE_SIZE**
 - **android.permission.PACKAGE_USAGE_STATS**
+- **android.permission.ACTION_MANAGE_OVERLAY_PERMISSION**
 
 ```kotlin
+//check manager overlay permission
+fun hasManagerOverlayPermission(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+        true
+    else
+        Settings.canDrawOverlays(context)
+}
+
+//request manager overlay permission
+fun requestManagerOverlayPermission(context: Context) {
+    val intent = try {
+        Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.fromParts("package", baseActivity.packageName, null as String?)
+        )
+    } catch (e: Exception) {
+        Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+    }
+
+    context.startActivity(intent)
+}
+
+//check AccessibilitySetting permission
+fun hasAccessibilitySettingPermission(appContext: Context): Boolean {
+    var accessibilityEnabled = 0
+    val ACCESSIBILITY_SERVICE: String =
+        appContext.getPackageName() + "/" + AccessibilitySettingsService::class.java.name
+    try {
+        accessibilityEnabled = Settings.Secure.getInt(
+            appContext.contentResolver,
+            Settings.Secure.ACCESSIBILITY_ENABLED
+        )
+    } catch (e: SettingNotFoundException) {
+        e.printStackTrace()
+    }
+
+    val mStringColonSplitter = SimpleStringSplitter(':')
+
+    if (accessibilityEnabled == 1) {
+        val settingValue = Settings.Secure.getString(
+            appContext.getContentResolver(),
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        if (settingValue != null) {
+            mStringColonSplitter.setString(settingValue)
+            while (mStringColonSplitter.hasNext()) {
+                val accessabilityService = mStringColonSplitter.next()
+                if (accessabilityService.equals(ACCESSIBILITY_SERVICE, ignoreCase = true)) {
+                    return true
+                }
+            }
+        }
+    }
+    return false
+}
+
+//request AccessibilitySetting permission
+fun requestAccessibilitySettingPermission(context: Context) {
+    val intent = Intent()
+    intent.action = Settings.ACTION_ACCESSIBILITY_SETTINGS
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+    context.startActivity(intent)
+}
+
 //check usage stat permission
 fun hasUsageStatPermission(context: Context): Boolean {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -59,7 +124,7 @@ fun cleanNormalProcess(
 ): Channel<BoostProgress>
 ```
 
-Boost apps when not have Accessibility permission
+Boost apps when not have AccessibilitySetting and Manager Overlay permission
 
 - **Parameter:**
   - activity: current activity.
@@ -79,7 +144,7 @@ Boost apps when not have Accessibility permission
 ): Channel<BoostProgress>
 ```
 
-Boost apps when have Accessibility permission
+Boost apps when have AccessibilitySetting and Manager Overlay permission
 
 - **Parameter:**
   - activity: current activity.
@@ -109,7 +174,7 @@ viewModelScope.launch {
   }
 }
 
-//boost without Accessibility permission
+//boost without AccessibilitySetting and Manager Overlay permission
 viewModelScope.launch {
   //boostType =  BoostType.CPU or BoostType.MEMORY or BoostType.BATTERY
   val boostProgress = boosterManager.cleanNormalProcess(activity, boostType, pkgNames)
@@ -120,7 +185,7 @@ viewModelScope.launch {
   }
 }
 
-//boost with Accessibility permission
+//boost with AccessibilitySetting and Manager Overlay permission
 viewModelScope.launch {
   //boostType =  BoostType.CPU or BoostType.MEMORY or BoostType.BATTERY
   val boostProgress = boosterManager.cleanAdvancedProcess(activity, boostType, pkgNames)
@@ -130,8 +195,5 @@ viewModelScope.launch {
     //update boost progress
   }
 }
-
-//cancel boost progress
-boosterManager.cancel()
 
 ```
