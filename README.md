@@ -27,7 +27,7 @@ Return scanning big files progress or big file list
 suspend fun clean(activity: AppCompatActivity, bigFiles: List<BigFile>)
 ```
 
-Clean big files
+Uninstall if big file have Type.APP, delete if big file have other Type
 
 - **Parameter:**
   - activity: the current visible Activity
@@ -60,7 +60,7 @@ enum class Type {
 ```kotlin
 // scan big files & get big file list
 viewModelScope.launch {
-  //BigFileManager will start scanning when collect bigFile Flow
+  //BigFileManager will start scanning when flow bigFile start collect the first time.
   bigFileManager.bigFile.collect { resultOrProgress ->
     if (resultOrProgress is ResultOrProgress.Result) {
       val bigFiles = resultOrProgress.result
@@ -74,6 +74,10 @@ viewModelScope.launch {
   }
 }
 
-
+//clean big files
+viewModelScope.launch {
+  bigFileManager.clean(activity, bigFiles)
+  //bigFiles: [BigFile(id=1, type=Type.APP,...), BigFile(id=2, type=Type.VIDEO,...), BigFile(id=3, type=Type.PHOTO,...)]
+}
 
 ```
