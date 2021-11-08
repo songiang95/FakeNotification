@@ -42,10 +42,10 @@ Find current connected wifi
 
 ```kotlin
 enum class ScanningType {
-  DNS,
-  SSL,
-  ARP,
-  ENCRYPTION
+    DNS,
+    SSL,
+    ARP,
+    ENCRYPTION
 }
 ```
 
@@ -53,11 +53,11 @@ enum class ScanningType {
 
 ```kotlin
 enum class IssueCode {
-  NO_INTERNET,
-  ARP_DUPLICATE_MAC,
-  SSL_MITM,
-  DNS_INVALID,
-  WIFI_NO_PASSWORD,
+    NO_INTERNET,
+    ARP_DUPLICATE_MAC,
+    SSL_MITM,
+    DNS_INVALID,
+    WIFI_NO_PASSWORD,
 }
 ```
 
