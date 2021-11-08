@@ -2,7 +2,6 @@
 
 - **android.permission.GET_PACKAGE_SIZE**
 - **android.permission.PACKAGE_USAGE_STATS**
-- **android.permission.READ_EXTERNAL_STORAGE**
 
 ```kotlin
 //check usage stat permission
@@ -28,107 +27,111 @@ fun requestUsageStatPermission(context: Context) {
 }
 ```
 
-# JunkManager
+# BoosterManager
 
 ## Constructor
 
 ```kotlin
-JunkManager(private val application : Application,
-private val scope: CoroutineScope)
+BoosterManager(private val context : Context)
 ```
-
-## Properties
-
-```kotlin
-val ignoringList: Flow<List<JunkInfo>>
-```
-
-List junk has been ignored.
-
-##
-
-```kotlin
-val junkInfos: Flow<ResultOrProgress<List<JunkInfo>, JunkScanningInfo>>
-```
-
-Flow of scanning junks progress or list junk was found after scan
 
 ## Public methods
 
 ```kotlin
-suspend fun clean(junks: List<JunkInfo>, progress: (Int) -> Unit)
+fun queryRunningApps(type: BoostType): Flow<List<RunningAppInfo>>
 ```
 
-Clean junks and update clean progress
-
-- **Parameters:**
-  - junks: List junk will be deleted.
-  - progress: function to update clean progress.
-
-##
-
-```kotlin
-suspend fun addIgnoring(junkInfos: List<JunkInfo>)
-```
-
-Add list of junk to ignore list
+Get all running apps
 
 - **Parameter:**
-  - junkInfos: list of junk will be ignored.
+  - type: type of boost (ex: BoostType.CPU, BoostType.MEMORY, BoostType.BATTERY)
+
+- **Return:**
+  - Flow<List<RunningAppInfo>>:  list running app
 
 ##
 
 ```kotlin
-suspend fun removeIgnoring(ids: List<String>) 
+fun cleanNormalProcess(
+    activity: AppCompatActivity,
+    type: BoostType,
+    pkgNames: List<String>
+): Channel<BoostProgress>
 ```
 
-Remove list of junk from ignore list
+Boost apps when not have Accessibility permission
 
-- **Parameters:**
-  - ids: list id of junks that will be removed from ignore list
+- **Parameter:**
+  - activity: current activity.
+  - type: type of boost (ex: BoostType.CPU, BoostType.MEMORY, BoostType.BATTERY).
+  - pkgNames: list package name of apps will be boosted.
+
+- **Return:**
+  - Channel<BoostProgress>: channel to update clean progress
+
+##
+
+```kotlin
+   fun cleanAdvancedProcess(
+    activity: AppCompatActivity,
+    type: BoostType,
+    pkgNames: List<String>
+): Channel<BoostProgress>
+```
+
+Boost apps when have Accessibility permission
+
+- **Parameter:**
+  - activity: current activity.
+  - type: type of boost (ex: BoostType.CPU, BoostType.MEMORY, BoostType.BATTERY).
+  - pkgNames: list package name of apps will be boosted.
+
+- **Return:**
+  - Channel<BoostProgress>: channel to update clean progress
+
+##
+
+```kotlin
+fun cancel()
+```
+
+Cancel boost progress
 
 # Usage Example
 
 ```kotlin
-//scan & get list of junks
+//query consume resource apps
 viewModelScope.launch {
-  // JunkManager will start scan junks when start collect junkInfos flow
-  junkManager.junkInfos.collect {
-    if (it is ResultOrProgress.Progress) {
-      val progress = it.progress
-      //update scanning progress
-    } else {
-      val result = (it as ResultOrProgress.Result).result
-      //update scan result
-    }
+  //boostType =  BoostType.CPU or BoostType.MEMORY or BoostType.BATTERY
+  boosterManager.queryRunningApps(boostType).collect { runningApps ->
+    //convert to RunningAppInfoModel
+
   }
 }
 
-//get ignore junks
+//boost without Accessibility permission
 viewModelScope.launch {
-  junkManager.ignoringList.collect { ignoreList ->
-    //ignoreList: [JunkInfo(id=com.android.youtube), JunkInfo(id=/download/temp.doc),...]
+  //boostType =  BoostType.CPU or BoostType.MEMORY or BoostType.BATTERY
+  val boostProgress = boosterManager.cleanNormalProcess(activity, boostType, pkgNames)
+  for (change in boostProgress) {
+    //change: KillingProgress(pkgName="com.android.sms")
+
+    //update boost progress
   }
 }
 
-//clean junks
+//boost with Accessibility permission
 viewModelScope.launch {
-  //junks: [JunkInfo(id=com.android.youtube), JunkInfo(id=/download/temp.doc),...]
-  junkManager.clean(junks) { cleanProgress ->
-    //update clean progress
+  //boostType =  BoostType.CPU or BoostType.MEMORY or BoostType.BATTERY
+  val boostProgress = boosterManager.cleanAdvancedProcess(activity, boostType, pkgNames)
+  for (change in boostProgress) {
+    //change: KillingProgress(pkgName="com.android.sms")
+
+    //update boost progress
   }
 }
 
-//add junks to ignore list
-viewModelScope.launch {
-  //junks: [JunkInfo(id=com.android.youtube), JunkInfo(id=/download/temp.doc),...]
-  junkManager.addIgnoring(junks)
-}
-
-//remove junks from ignore list
-viewModelScope.launch {
-  //ids: ["com.android.sms", "download/temp.doc"]
-  junkManager.removeIgnoring(ids)
-}
+//cancel boost progress
+boosterManager.cancel()
 
 ```
