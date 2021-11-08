@@ -1,107 +1,57 @@
 # Permissions
 
-- **android.permission.REQUEST_DELETE_PACKAGES**
-- **android.permission.GET_PACKAGE_SIZE**
-- **android.permission.PACKAGE_USAGE_STATS**
+- **android.permission.WRITE_EXTERNAL_STORAGE**
 
-```kotlin
-//check usage stat permission
-fun hasUsageStatPermission(context: Context): Boolean {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode =
-            appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName
-            )
-        return mode == AppOpsManager.MODE_ALLOWED
-    }
-
-    return true
-}
-
-//request usage stat permission
-fun requestUsageStatPermission(context: Context) {
-    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-    context.startActivity(intent)
-}
-```
-
-# BigFileManager
+# DuplicatePhotoManager
 
 ## Constructor
 
 ```kotlin
-BigFileManager(private val scope : CoroutineScope,
-private val application: Application)
+DuplicatePhotoManager(private val context: Context, private val scope: CoroutineScope)
+
 ```
 
 ## Properties
 
 ```kotlin
-val bigFile: Flow<ResultOrProgress<List<BigFile>, Int>>
+val duplicatePhotos: Flow<ResultOrProgress<List<List<Photo>>, Int>>
 ```
 
-Return scanning big files progress or big file list
+Flow of scanning duplicate photos progress and duplicate photo list
 
 ## Public methods
 
 ```kotlin
-suspend fun clean(activity: AppCompatActivity, bigFiles: List<BigFile>)
+suspend fun delete(activity: AppCompatActivity, ids: List<String>)
 ```
 
-Uninstall if big file have Type.APP, delete if big file have other Type
+Delete duplicate photos
 
-- **Parameter:**
-  - activity: the current visible Activity
-  - bigFiles: big file list that will be cleaned
-
-## Enum Type
-
-Type of big file
-
-```kotlin
-enum class Type {
-    APP,
-    VIDEO,
-    PHOTO,
-    AUDIO,
-    DOCUMENT,
-    OTHER_FILE
-}
-```
-
-- APP: Big application (ex: Chrome, Facebook, Youtube,...).
-- VIDEO: Big video file, files has extension: 3gp, mp4, mkv, webm.
-- PHOTO: Big image file, file has extension: bmp, gif, jpg, png, jpeg, webp, heic, heif.
-- AUDIO: Big audio file, file has extension: ogg, m4a, mp3, imy, ota, flac, amr,...
-- DOCUMENT: Big document file, file has extension: txt, pdf, doc, docx, xls, xlsx, ppt, pptx.
-- OTHER_FILE: Big other file, file that has extension not match any case above.
+- **Parameters:**
+  - activity: current visible activity.
+  - ids: list path or list uri of photo that will be deleted.
 
 # Usage Example
 
 ```kotlin
-// scan big files & get big file list
+// scan duplicate photos & get duplicate photo list
 viewModelScope.launch {
-  //BigFileManager will start scanning when flow bigFile start collect the first time.
-  bigFileManager.bigFile.collect { resultOrProgress ->
-    if (resultOrProgress is ResultOrProgress.Result) {
-      val bigFiles = resultOrProgress.result
-      //bigFiles: [BigFile(id=1, type=Type.APP,...), BigFile(id=2, type=Type.VIDEO,...), BigFile(id=3, type=Type.PHOTO,...)]
-      //update result
-    } else {
-      val progress = (resultOrProgress as ResultOrProgress.Progress).progress
-      //progress: 10
-      //update scanning progress
+    //DuplicatePhotoManager will start scanning when flow duplicatePhotos start collect the first time.
+    duplicatePhotoManager.duplicatePhotos.collect { resultOrProgress ->
+        if (resultOrProgress is ResultOrProgress.Result) {
+            val duplicatePhotos = resultOrProgress.result
+            //duplicatePhotos: [[Photo(id=1,...), Photo(id=2,...)], [Photo(id=3,...), Photo(id=4,...)],...]
+            //update result
+        } else {
+            val progress = (resultOrProgress as ResultOrProgress.Progress).progress
+            //progress: 10
+            //update scanning progress
+        }
     }
-  }
 }
 
-//clean big files
+//delete duplicate photos
 viewModelScope.launch {
-  bigFileManager.clean(activity, bigFiles)
-  //bigFiles: [BigFile(id=1, type=Type.APP,...), BigFile(id=2, type=Type.VIDEO,...), BigFile(id=3, type=Type.PHOTO,...)]
+    duplicatePhotoManager.delete(activity, ids)
 }
-
 ```
