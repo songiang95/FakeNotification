@@ -22,7 +22,7 @@ fun scan() = flowProgress<List<WifiIssue>, WifiScanningState>
 ```
 
 - **Return:**
-  - Flow<ResultOrProgress<List<WifiIssue>, WifiScanningState>>: flow of wifi scanning state or
+  - Flow<ResultOrProgress<List\<WifiIssue\>, WifiScanningState>>: flow of wifi scanning state or
     list of wifi issues
 
 ##
@@ -42,10 +42,10 @@ Find current connected wifi
 
 ```kotlin
 enum class ScanningType {
-    DNS,
-    SSL,
-    ARP,
-    ENCRYPTION
+  DNS,
+  SSL,
+  ARP,
+  ENCRYPTION
 }
 ```
 
@@ -53,11 +53,11 @@ enum class ScanningType {
 
 ```kotlin
 enum class IssueCode {
-    NO_INTERNET,
-    ARP_DUPLICATE_MAC,
-    SSL_MITM,
-    DNS_INVALID,
-    WIFI_NO_PASSWORD,
+  NO_INTERNET,
+  ARP_DUPLICATE_MAC,
+  SSL_MITM,
+  DNS_INVALID,
+  WIFI_NO_PASSWORD,
 }
 ```
 
@@ -68,31 +68,31 @@ enum class IssueCode {
 val myWifiInfo = Utils.findCurrentWifi(context)
 val isWifiConnected = myWifiInfo != null
 if (isWifiConnected) {
-    //start scan wifi
+  //start scan wifi
 } else {
-    //turn on wifi
+  //turn on wifi
 }
 
 // scan wifi & get scan result
 viewModelScope.launch {
-    wifiScanner.scan().collect {
-        if (it is ResultOrProgress.Progress) {
-            val progress = it.progress
-            //update scanning progress
+  wifiScanner.scan().collect {
+    if (it is ResultOrProgress.Progress) {
+      val progress = it.progress
+      //update scanning progress
 
-            if (progress is WifiScanning) {
-                //wifi is scanning
-                //progress: WifiScanning(type = ScanningType.DNS)
-            } else if (progress is WifiScanningDone) {
-                //wifi is scan done
-                //progress: WifiScanningDone(type = ScanningType.DNS, issue = null)
-            }
+      if (progress is WifiScanning) {
+        //wifi is scanning
+        //progress: WifiScanning(type = ScanningType.DNS)
+      } else if (progress is WifiScanningDone) {
+        //wifi is scan done
+        //progress: WifiScanningDone(type = ScanningType.DNS, issue = null)
+      }
 
-        } else {
-            val wifiIssues = (it as ResultOrProgress.Result).result
-            // update wifi scan result
-        }
+    } else {
+      val wifiIssues = (it as ResultOrProgress.Result).result
+      // update wifi scan result
     }
+  }
 }
 
 ```
