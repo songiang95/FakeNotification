@@ -1,57 +1,98 @@
 # Permissions
 
-- **android.permission.WRITE_EXTERNAL_STORAGE**
+- **android.permission.INTERNET**
+- **android.permission.ACCESS_WIFI_STATE**
+- **android.permission.CHANGE_WIFI_STATE**
+- **android.permission.ACCESS_NETWORK_STATE**
+- **android.permission.ACCESS_COARSE_LOCATION**
+- **android.permission.ACCESS_FINE_LOCATION**
 
-# DuplicatePhotoManager
+# WifiSecurity
 
 ## Constructor
 
 ```kotlin
-DuplicatePhotoManager(private val context: Context, private val scope: CoroutineScope)
-
+WifiSecurity(context: Context, val scope : CoroutineScope)
 ```
-
-## Properties
-
-```kotlin
-val duplicatePhotos: Flow<ResultOrProgress<List<List<Photo>>, Int>>
-```
-
-Flow of scanning duplicate photos progress and duplicate photo list
 
 ## Public methods
 
 ```kotlin
-suspend fun delete(activity: AppCompatActivity, ids: List<String>)
+fun scan() = flowProgress<List<WifiIssue>, WifiScanningState>
 ```
 
-Delete duplicate photos
+- **Return:**
+  - Flow<ResultOrProgress<List<WifiIssue>, WifiScanningState>>: flow of wifi scanning state or
+    list of wifi issues
+
+##
+
+```kotlin
+static fun findCurrentWifi(context: Context): MyWifiInfo?
+```
+
+Find current connected wifi
 
 - **Parameters:**
-  - activity: current visible activity.
-  - ids: list path or list uri of photo that will be deleted.
+  - context: any context.
+- **Return:**
+  - MyWifiInfo: the current connected wifi, if null then wifi is not connected yet.
+
+## Enum ScanningType
+
+```kotlin
+enum class ScanningType {
+    DNS,
+    SSL,
+    ARP,
+    ENCRYPTION
+}
+```
+
+## Enum IssueCode
+
+```kotlin
+enum class IssueCode {
+    NO_INTERNET,
+    ARP_DUPLICATE_MAC,
+    SSL_MITM,
+    DNS_INVALID,
+    WIFI_NO_PASSWORD,
+}
+```
 
 # Usage Example
 
 ```kotlin
-// scan duplicate photos & get duplicate photo list
+//find current connected wifi. Check wifi is connected or not before scan wifi.
+val myWifiInfo = Utils.findCurrentWifi(context)
+val isWifiConnected = myWifiInfo != null
+if (isWifiConnected) {
+    //start scan wifi
+} else {
+    //turn on wifi
+}
+
+// scan wifi & get scan result
 viewModelScope.launch {
-    //DuplicatePhotoManager will start scanning when flow duplicatePhotos start collect the first time.
-    duplicatePhotoManager.duplicatePhotos.collect { resultOrProgress ->
-        if (resultOrProgress is ResultOrProgress.Result) {
-            val duplicatePhotos = resultOrProgress.result
-            //duplicatePhotos: [[Photo(id=1,...), Photo(id=2,...)], [Photo(id=3,...), Photo(id=4,...)],...]
-            //update result
-        } else {
-            val progress = (resultOrProgress as ResultOrProgress.Progress).progress
-            //progress: 10
+    wifiScanner.scan().collect {
+        if (it is ResultOrProgress.Progress) {
+            val progress = it.progress
             //update scanning progress
+
+            if (progress is WifiScanning) {
+                //wifi is scanning
+                //progress: WifiScanning(type = ScanningType.DNS)
+            } else if (progress is WifiScanningDone) {
+                //wifi is scan done
+                //progress: WifiScanningDone(type = ScanningType.DNS, issue = null)
+            }
+
+        } else {
+            val wifiIssues = (it as ResultOrProgress.Result).result
+            // update wifi scan result
         }
     }
 }
 
-//delete duplicate photos
-viewModelScope.launch {
-    duplicatePhotoManager.delete(activity, ids)
-}
 ```
