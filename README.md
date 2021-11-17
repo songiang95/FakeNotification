@@ -30,8 +30,6 @@ data class AppLockInfo(val pkgName: String, val isLocked: Boolean)
 - isLocked: Boolean true if app is locked by user
 - AppLockInfo.descriptionId: In resource id for AppLockInfo description
 
-##
-
 ## AppLockSetting
 
 ```kotlin
@@ -53,8 +51,6 @@ data class AppLockSetting(
   be take an picture
 - lockTimeOut: Long is an time(ms) threshold to an unlocked state back to locked state
 
-##
-
 ## AppLockIntruder
 
 ```kotlin
@@ -72,8 +68,6 @@ data class AppLockIntruder(
 - pkgName: String package name of the app that intruder tries to unlock
 - created: Long datetime when camera captured an image
 - imagePath: String where contains image on device
-
-##
 
 ## AppLockManager
 
