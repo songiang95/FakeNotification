@@ -105,11 +105,9 @@ class AppLockManagerImpl(val context: Context) : IAppLockManager
     - **Parameters:**
       - pkgName: String identify of app that will be unlocked
 
-    - ```suspend fun lock(pkgNames: List<String>)```
-      - Use to unlock a list app
-      - **Parameters:**
-        - pkgNames: List<String> identify of apps that will be unlocked
-
-
+  - ```suspend fun lock(pkgNames: List<String>)```
+    - Use to unlock a list app
+    - **Parameters:**
+      - pkgNames: List<String> identify of apps that will be unlocked
 
 # UsageExample
