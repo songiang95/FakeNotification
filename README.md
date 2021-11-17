@@ -2,128 +2,49 @@
 
 ## Required
 
-- android.permission.READ_EXTERNAL_STORAGE
-- android.permission.PACKAGE_USAGE_STATS (android version >= 8.0)
+- android.permission.PACKAGE_USAGE_STATS (android version >= 8)
 
 # Classes
 
-## Enum Type
+## RunningAppInfo
 
 ```kotlin
-enum class Type {
-    APP,
-    VIDEO,
-    PHOTO,
-    AUDIO,
-    DOCUMENT,
-    OTHER_FILE
-}
-```
-
-#### Note:
-
-- OTHER_FILE is any file type that not match any file type above
-
-## BigFile
-
-```kotlin
-data class BigFile(val id: String, val type: Type, val name: String, val size: Long, val date: Long)
+data class RunningAppInfo(val pkgName: String, val isSelected: Boolean)
 ```
 
 ### Properties
 
-- id: package name for app and file path or uri for file
-- type: file type
-- name: app name or file name
-- date (ms): datetime when file is created or app is installed
-- size (byte): size of an app or file
+- pkgName: package name use to identify an app
+- isSelected: true if suggest optimizing
 
-## BigFileManager
+## KillingProgress
 
 ```kotlin
-class BigFileManager(private val scope: CoroutineScope, private val application: Application)
+data class KillingProgress(val pkgName: String) : BoostProgress
 ```
 
 ### Properties
 
-```kotlin
-val bigFile: Flow<ResultOrProgress<List<BigFile>, Int>>
-```
+- pkgName: package name use to identify an app
 
-Collecting all big files which includes file and app type
+## BoosterManager
+
+```kotlin
+class BoosterManager(private val context: Context)
+```
 
 ### Public methods
 
 ```kotlin
-suspend fun clean(activity: AppCompatActivity, bigFiles: List<BigFile>)
+fun queryRunningApps(type: BoostType): Flow<List<RunningAppInfo>>
 ```
 
-Remove big files out of list big files and delete files or remove apps from device
+Find consuming apps by boost type
 
-- **Parameters**
-    - activity: AppCompatActivity
-    - bigFiles: list big files is selected
+- **Properties:**
+    - type:
+
+- **Return:**
+    - Flow\<List\<RunningAppInfo\>\>:
 
 # Usage Example
-
-## Scanning Screen
-
-```kotlin
-//BigFileViewModel.kt
-// to update scan big file progress
-val _scanningPercent = MutableLiveData<Int>()
-...
-fun scan() {
-    coroutineScope.launch {
-        bigFileManager.bigFiles.collect {
-            if (it is ResultOrProgress.Progress) {
-                _scanningPercent.value = it.progress
-            } else {
-                ...
-            }
-        }
-    }
-}
-```
-
-## BigFile Screen
-
-```kotlin
-//BigFileViewModel.kt
-//to update scan big file result
-
-val _bigFiles = MutableLiveData<List<BigFile>>()
-...
-fun scan() {
-    coroutineScope.launch {
-        bigFileManager.bigFiles.collect {
-            if (it is ResultOrProgress.Progress) {
-                ...
-            } else {
-                _bigFiles.value = (it as ResultOrProgress.Result).result
-            }
-        }
-    }
-}
-
-```
-
-## BigVideo Screen
-*Other screen is similar*
-```kotlin
-//BigFileViewModel.kt
-//to get list big video files
-val _bigFiles = MutableLiveData<List<BigFile>>()
-val bigVideoFiles: LiveData<List<BigFile>> = _bigFile.map { bigFiles ->
-    bigFiles.filter {
-        it.type == TYPE.VIDEO
-    }
-}
-...
-
-// to delete big video file
-coroutineScope.launch {
-    bigFileManager.clean(activity: AppCompatActivity, bigFiles: List< BigFile >)
-}
-
-```
