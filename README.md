@@ -158,8 +158,10 @@ Use to unlock an app
 suspend fun lock(pkgNames: List<String>)
 ```
 
-- Use to unlock a list app - **Parameters:**
-- pkgNames: List<String> identify of apps that will be unlocked
+Use to unlock a list app
+
+- **Parameters:**
+    - pkgNames: List<String> identify of apps that will be unlocked
 
 ##
 
