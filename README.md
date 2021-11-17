@@ -109,7 +109,7 @@ fun scan() {
 ```
 
 ## BigVideo Screen
-
+*Other screen is similar*
 ```kotlin
 //BigFileViewModel.kt
 //to get list big video files
