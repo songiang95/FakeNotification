@@ -99,16 +99,21 @@ val intruders: Flow<List<AppLockIntruder>>
 
 List intruders who unlock failed times >= AppLockSetting.intruderTimes
 
-#### Note: in a session, at most one photo taken
+#### Note:
+
+- in a session, at most one photo taken
 
 ##
 
-- ```val settings: Flow<AppLockSetting>```
-    - where contains setting parameters of user
-    - Note
-        - lockTimeOut is starting when the app is closed.
-        - if set lockTimeOut = LOCK_AFTER_SCREEN_OFF then an unlocked state back to locked state
-          when the screen off
+```kotlin
+val settings: Flow<AppLockSetting>
+```
+
+Where contains setting parameters of user
+
+- Note
+- lockTimeOut is starting when the app is closed. - if set lockTimeOut = LOCK_AFTER_SCREEN_OFF then
+  an unlocked state back to locked state when the screen off
 
 ### Public methods
 
