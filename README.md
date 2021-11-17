@@ -169,4 +169,4 @@ coroutineScope.launch {
 
 ```
 
-#### Note: Boost Memory and Boost Battery is the same as the Boost CPU
+#### Note: Boost type Memory and Battery is similar to the Boost CPU above
