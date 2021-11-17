@@ -99,8 +99,6 @@ val intruders: Flow<List<AppLockIntruder>>
 
 List intruders who unlock failed times >= AppLockSetting.intruderTimes
 
-##
-
 #### Note: in a session, at most one photo taken
 
 ##
