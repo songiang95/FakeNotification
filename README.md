@@ -77,15 +77,25 @@ class AppLockManagerImpl(val context: Context) : IAppLockManager
 
 ### Properties
 
-- ```val suggestApps: Flow<List<AppLockInfo>>```
-    - list installed apps which used to setup app lock function
+```kotlin
+val suggestApps: Flow<List<AppLockInfo>>
+```
 
-- ```val appLockInfo: Flow<List<AppLockInfo>>```
-    - list installed apps which includes locked apps and unlocked apps
+List installed apps which used to setup app lock function
 
-- ```val intruders: Flow<List<AppLockIntruder>>```
-    - list intruders who unlock failed times >= AppLockSetting.intruderTimes - Note: in a session,
-      at most one photo taken
+```kotlin
+val appLockInfo: Flow<List<AppLockInfo>>
+```
+
+List installed apps which includes locked apps and unlocked apps
+
+```kotlin
+val intruders: Flow<List<AppLockIntruder>>
+```
+
+List intruders who unlock failed times >= AppLockSetting.intruderTimes
+
+#### Note: in a session, at most one photo taken
 
 - ```val settings: Flow<AppLockSetting>```
     - where contains setting parameters of user
@@ -96,24 +106,44 @@ class AppLockManagerImpl(val context: Context) : IAppLockManager
 
 ### Public methods
 
-- ```suspend fun lock(pkgName: String)```
-    - Use to lock an app
-    - **Parameters:**
-        - pkgName: String identify of app that will be locked
+```kotlin
+suspend fun lock(pkgName: String)
+```
 
-- ```suspend fun lock(pkgNames: List<String>)```
-    - Use to lock a list app
-    - **Parameters:**
-        - pkgNames: List<String> identify of apps that will be locked
+Use to lock an app
 
-- ```suspend fun unlock(pkgName: String)```
-    - Use to unlock an app
-    - **Parameters:**
-        - pkgName: String identify of app that will be unlocked
+- **Parameters:**
+    - pkgName: String identify of app that will be locked
 
-- ```suspend fun lock(pkgNames: List<String>)```
-    - Use to unlock a list app
-    - **Parameters:**
-        - pkgNames: List<String> identify of apps that will be unlocked
+```kotlin
+
+suspend fun lock(pkgNames: List<String>)
+
+```
+
+Use to lock a list app
+
+- **Parameters:**
+    - pkgNames: List<String> identify of apps that will be locked
+
+```kotlin
+suspend fun unlock(pkgName: String)
+```
+
+Use to unlock an app
+
+- **Parameters:**
+    - pkgName: String identify of app that will be unlocked
+
+```kotlin
+suspend fun lock(pkgNames: List<String>)
+```
+
+- Use to unlock a list app - **Parameters:**
+- pkgNames: List<String> identify of apps that will be unlocked
+
+```kotlin
+fun setPassword(password: String, pattern: Boolean)
+```
 
 # UsageExample
