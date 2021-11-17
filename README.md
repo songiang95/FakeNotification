@@ -111,9 +111,11 @@ val settings: Flow<AppLockSetting>
 
 Where contains setting parameters of user
 
-- Note
-- lockTimeOut is starting when the app is closed. - if set lockTimeOut = LOCK_AFTER_SCREEN_OFF then
-  an unlocked state back to locked state when the screen off
+#### Note:
+
+- LockTimeOut is starting when the app is closed.
+- If set lockTimeOut = LOCK_AFTER_SCREEN_OFF then an unlocked state back to locked state when the
+  screen off
 
 ### Public methods
 
