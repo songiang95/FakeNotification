@@ -243,7 +243,7 @@ Using to custom layout for locked screen
 
 ```kotlin
 
-// ***************Setup Screen [appLockManager.hasPassword() = false]***************
+//Setup Screen [appLockManager.hasPassword() = false]
 //to get suggested apps
 coroutineScope.launch {
     appLockManager.suggestApps.collect { apps ->
@@ -256,7 +256,7 @@ appLockManager.setPassword(password:String, pattern: Boolean)
 ```
 
 ```kotin
-// ***************Lock Screen***************
+//Lock Screen
 //to retrieve locked app
 coroutineScope.launch {
     appLockManager.appLockInfo.collect { apps ->
@@ -273,8 +273,10 @@ coroutineScope.launch {
     appLockManager.unlock(pkgName)
 }
 
+```
 
-//***************Setting Screen***************
+```kotlin
+//Setting Screen
 //to retrieve old setting
 coroutineScope.launch {
     appLockManager.settings.collect { setting ->
