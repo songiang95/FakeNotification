@@ -128,6 +128,8 @@ Use to lock an app
 - **Parameters:**
     - pkgName: String identify of app that will be locked
 
+##
+
 ```kotlin
 
 suspend fun lock(pkgNames: List<String>)
@@ -139,6 +141,8 @@ Use to lock a list app
 - **Parameters:**
     - pkgNames: List<String> identify of apps that will be locked
 
+##
+
 ```kotlin
 suspend fun unlock(pkgName: String)
 ```
@@ -148,12 +152,16 @@ Use to unlock an app
 - **Parameters:**
     - pkgName: String identify of app that will be unlocked
 
+##
+
 ```kotlin
 suspend fun lock(pkgNames: List<String>)
 ```
 
 - Use to unlock a list app - **Parameters:**
 - pkgNames: List<String> identify of apps that will be unlocked
+
+##
 
 ```kotlin
 fun setPassword(password: String, pattern: Boolean)
