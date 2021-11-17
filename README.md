@@ -24,11 +24,11 @@
 data class AppLockInfo(val pkgName: String, val isLocked: Boolean)
 ```
 
-- **Properties**
+### Properties
 
-    - pkgName: String used to identify an app
-    - isLocked: Boolean true if app is locked by user
-    - AppLockInfo.descriptionId: Int resource id for AppLockInfo description
+- pkgName: String used to identify an app
+- isLocked: Boolean true if app is locked by user
+- AppLockInfo.descriptionId: In resource id for AppLockInfo description
 
 ##
 
@@ -44,13 +44,14 @@ data class AppLockSetting(
 )
 ```
 
-- **Properties**
-    - patternVisible: Boolean true if lines are visible in locked screen
-    - fingerprintEnable: Boolean true to enable fingerprint feature
-    - intruderEnable : Boolean true to enable to capture image of intruders
-    - intruderTimes : Int if times of failed attempts are more than the intruderTimes them camera
-      will be take an picture
-    - lockTimeOut: Long is an time(ms) threshold to an unlocked state back to locked state
+### Properties
+
+- patternVisible: Boolean true if lines are visible in locked screen
+- fingerprintEnable: Boolean true to enable fingerprint feature
+- intruderEnable : Boolean true to enable to capture image of intruders
+- intruderTimes : Int if times of failed attempts are more than the intruderTimes them camera will
+  be take an picture
+- lockTimeOut: Long is an time(ms) threshold to an unlocked state back to locked state
 
 ##
 
@@ -65,11 +66,12 @@ data class AppLockIntruder(
 )
 ```
 
-- **Properties**
-    - id: Int identify of intruder
-    - pkgName: String package name of the app that intruder tries to unlock
-    - created: Long datetime when camera captured an image
-    - imagePath: String where contains image on device
+### Properties
+
+- id: Int identify of intruder
+- pkgName: String package name of the app that intruder tries to unlock
+- created: Long datetime when camera captured an image
+- imagePath: String where contains image on device
 
 ##
 
@@ -79,43 +81,45 @@ data class AppLockIntruder(
 class AppLockManagerImpl(val context: Context) : IAppLockManager
 ```
 
-- **Properties**
-    - ```val suggestApps: Flow<List<AppLockInfo>>```
-        - list installed apps which used to setup app lock function
+### Properties
 
-    - ```val appLockInfo: Flow<List<AppLockInfo>>```
-        - list installed apps which includes locked apps and unlocked apps
+- ```val suggestApps: Flow<List<AppLockInfo>>```
+    - list installed apps which used to setup app lock function
 
-    - ```val intruders: Flow<List<AppLockIntruder>>```
-        - list intruders who unlock failed times >= AppLockSetting.intruderTimes
-        - Note: in a session, at most one photo taken
+- ```val appLockInfo: Flow<List<AppLockInfo>>```
+    - list installed apps which includes locked apps and unlocked apps
 
-    - ```val settings: Flow<AppLockSetting>```
-        - where contains setting parameters of user
-        - Note
-            - lockTimeOut is starting when the app is closed.
-            - if set lockTimeOut = LOCK_AFTER_SCREEN_OFF then an unlocked state back to locked state
-              when the screen off
+- ```val intruders: Flow<List<AppLockIntruder>>```
+    - list intruders who unlock failed times >= AppLockSetting.intruderTimes - Note: in a session,
+      at most one photo taken
 
-- **Public methods**
-    - ```suspend fun lock(pkgName: String)```
-        - Use to lock an app
-        - **Parameters:**
-            - pkgName: String identify of app that will be locked
+- ```val settings: Flow<AppLockSetting>```
+    - where contains setting parameters of user
+    - Note
+        - lockTimeOut is starting when the app is closed.
+        - if set lockTimeOut = LOCK_AFTER_SCREEN_OFF then an unlocked state back to locked state
+          when the screen off
 
-    - ```suspend fun lock(pkgNames: List<String>)```
-        - Use to lock a list app
-        - **Parameters:**
-            - pkgNames: List<String> identify of apps that will be locked
+### Public methods
 
-    - ```suspend fun unlock(pkgName: String)```
-        - Use to unlock an app
-        - **Parameters:**
-            - pkgName: String identify of app that will be unlocked
+- ```suspend fun lock(pkgName: String)```
+    - Use to lock an app
+    - **Parameters:**
+        - pkgName: String identify of app that will be locked
 
-    - ```suspend fun lock(pkgNames: List<String>)```
-        - Use to unlock a list app
-        - **Parameters:**
-            - pkgNames: List<String> identify of apps that will be unlocked
+- ```suspend fun lock(pkgNames: List<String>)```
+    - Use to lock a list app
+    - **Parameters:**
+        - pkgNames: List<String> identify of apps that will be locked
+
+- ```suspend fun unlock(pkgName: String)```
+    - Use to unlock an app
+    - **Parameters:**
+        - pkgName: String identify of app that will be unlocked
+
+- ```suspend fun lock(pkgNames: List<String>)```
+    - Use to unlock a list app
+    - **Parameters:**
+        - pkgNames: List<String> identify of apps that will be unlocked
 
 # UsageExample
