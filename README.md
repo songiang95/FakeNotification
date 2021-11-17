@@ -212,4 +212,96 @@ Find an intruder based on it's id
 
 - The result of function could be null if id is incorrect
 
+##
+
+```kotlin
+fun updateAppLockSetting(setting: AppLockSetting)
+```
+
+Update new setting when user change setting
+
+- **Parameters:**
+    - setting: new setting changed by user
+
+##
+
+```kotlin
+fun setCustomAppLockScreen(layoutId: Int)
+```
+
+Using to custom layout for locked screen
+
+- **Parameters:**
+    - layoutId: layout resource id of custom layout
+
+#### Note:
+
+- Custom layout must have the same structure and id inside it as the
+  R.layout.activity_app_lock_screen.xml
+
 # UsageExample
+
+```kotlin
+
+// Setup Screen [appLockManager.hasPassword() = false]
+-to get suggested apps
+        coroutineScope.launch {
+            appLockManager.suggestApps.collect { apps ->
+
+            }
+        }
+
+-required before moving to lock screen
+        appLockManager.setPassword(password:String, pattern: Boolean)
+
+// Lock Screen
+-to retrieve locked app
+        coroutineScope.launch {
+            appLockManager.appLockInfo.collect { apps ->
+
+            }
+        }
+-to lock app
+coroutineScope.launch {
+    appLockManager.lock(pkgName)
+}
+
+-to unlock app
+coroutineScope.launch {
+    appLockManager.unlock(pkgName)
+}
+
+// Setting Screen
+-to retrieve old setting
+        coroutineScope.launch {
+            appLockManager.settings.collect { setting ->
+
+            }
+        }
+
+-to change parameters of setting
+coroutineScope.launch {
+    appLockManager.updateAppLockSetting(setting: AppLockSetting)
+}
+-change password
+        appLockManager.setPassword(password:String, pattern: Boolean)
+
+// Intruder Screen
+-to retrieve intruders
+coroutineScope.launch {
+    appLockManager.intruders.collect { setting ->
+
+    }
+}
+-to get an intruder
+        coroutineScope.launch {
+            appLockManager.queryIntruder(id: Int)
+        }
+
+-to remove intruders
+
+coroutineScope.launch {
+    appLockManager.deleteIntruder(intruder: Intruder) or appLockManager.deleteIntruders(intruders: List< AppLockIntruder >)
+}
+		
+```
