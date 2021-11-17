@@ -296,7 +296,11 @@ coroutineScope.launch {
 }
 //change password
 appLockManager.setPassword(password:String, pattern: Boolean)
+```
 
+## Intruder Screen
+
+```kotlin
 // Intruder Screen
 //to retrieve intruders
 coroutineScope.launch {
@@ -316,3 +320,5 @@ coroutineScope.launch {
 }
 
 ```
+
+
