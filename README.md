@@ -168,3 +168,5 @@ coroutineScope.launch {
 //clean process advanced (with AccessibilitySettingsService permission) similar to clean normal
 
 ```
+
+#### Note: Boost Memory and Boost Battery is the same as the Boost CPU
