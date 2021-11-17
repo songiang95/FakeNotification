@@ -83,11 +83,15 @@ val suggestApps: Flow<List<AppLockInfo>>
 
 List installed apps which used to setup app lock function
 
+##
+
 ```kotlin
 val appLockInfo: Flow<List<AppLockInfo>>
 ```
 
 List installed apps which includes locked apps and unlocked apps
+
+##
 
 ```kotlin
 val intruders: Flow<List<AppLockIntruder>>
@@ -95,7 +99,11 @@ val intruders: Flow<List<AppLockIntruder>>
 
 List intruders who unlock failed times >= AppLockSetting.intruderTimes
 
+##
+
 #### Note: in a session, at most one photo taken
+
+##
 
 - ```val settings: Flow<AppLockSetting>```
     - where contains setting parameters of user
