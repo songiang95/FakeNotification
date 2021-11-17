@@ -26,9 +26,9 @@ data class AppLockInfo(val pkgName: String, val isLocked: Boolean)
 
 ### Properties
 
-- pkgName: String used to identify an app
-- isLocked: Boolean true if app is locked by user
-- AppLockInfo.descriptionId: In resource id for AppLockInfo description
+- pkgName: used to identify an app
+- isLocked: true if app is locked by user
+- AppLockInfo.descriptionId: Int resource id for AppLockInfo description
 
 ## AppLockSetting
 
@@ -44,12 +44,12 @@ data class AppLockSetting(
 
 ### Properties
 
-- patternVisible: Boolean true if lines are visible in locked screen
-- fingerprintEnable: Boolean true to enable fingerprint feature
-- intruderEnable : Boolean true to enable to capture image of intruders
-- intruderTimes : Int if times of failed attempts are more than the intruderTimes them camera will
-  be take an picture
-- lockTimeOut: Long is an time(ms) threshold to an unlocked state back to locked state
+- patternVisible: true if lines are visible in locked screen
+- fingerprintEnable: true to enable fingerprint feature
+- intruderEnable : true to enable to capture image of intruders
+- intruderTimes : if times of failed attempts are more than the intruderTimes them camera will be
+  take an picture
+- lockTimeOut: is an time(ms) threshold to an unlocked state back to locked state
 
 ## AppLockIntruder
 
@@ -64,10 +64,10 @@ data class AppLockIntruder(
 
 ### Properties
 
-- id: Int identify of intruder
-- pkgName: String package name of the app that intruder tries to unlock
-- created: Long datetime when camera captured an image
-- imagePath: String where contains image on device
+- id: identify of intruder
+- pkgName: package name of the app that intruder tries to unlock
+- created: datetime when camera captured an image
+- imagePath: where contains image on device
 
 ## AppLockManager
 
@@ -126,7 +126,7 @@ suspend fun lock(pkgName: String)
 Use to lock an app
 
 - **Parameters:**
-    - pkgName: String identify of app that will be locked
+    - pkgName: identify of app that will be locked
 
 ##
 
@@ -139,7 +139,7 @@ suspend fun lock(pkgNames: List<String>)
 Use to lock a list app
 
 - **Parameters:**
-    - pkgNames: List<String> identify of apps that will be locked
+    - pkgNames: identify of apps that will be locked
 
 ##
 
@@ -150,7 +150,7 @@ suspend fun unlock(pkgName: String)
 Use to unlock an app
 
 - **Parameters:**
-    - pkgName: String identify of app that will be unlocked
+    - pkgName: identify of app that will be unlocked
 
 ##
 
@@ -161,12 +161,55 @@ suspend fun lock(pkgNames: List<String>)
 Use to unlock a list app
 
 - **Parameters:**
-    - pkgNames: List<String> identify of apps that will be unlocked
+    - pkgNames: identify of apps that will be unlocked
 
 ##
 
 ```kotlin
 fun setPassword(password: String, pattern: Boolean)
 ```
+
+Set new password for locked screen
+
+- **Parameters:**
+    - password: new password created by user
+    - pattern: true if user created new password as Pattern style, false as Pin style
+
+##
+
+```kotlin
+suspend fun deleteIntruder(id: Int)
+```
+
+Delete an intruder from AppLockManager.intruders and intruder's photo from device
+
+- **Parameters:**
+    - id: identify of intruder
+
+##
+
+```kotlin
+suspend fun deleteAllIntruders()
+```
+
+Delete all intruders from AppLockManager.intruders and intruder's photos from device
+
+##
+
+```kotlin
+suspend fun queryIntruder(id: Int): AppLockIntruder?
+```
+
+Find an intruder based on it's id
+
+- **Parameters:**
+    - id: identify of intruder
+
+- **Return:**
+    - AppLockIntruder?: intruder found
+
+#### Note:
+
+- The result of function could be null if id is incorrect
 
 # UsageExample
