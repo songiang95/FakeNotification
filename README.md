@@ -239,6 +239,17 @@ Using to custom layout for locked screen
 - Custom layout must have the same structure and id inside it as the
   R.layout.activity_app_lock_screen.xml
 
+##
+
+```kotlin
+fun hasPassword(): Boolean
+```
+
+Using to check the password has been set for the lock screen or not
+
+- **Return:**
+    - Boolean: true if password has been set
+
 # UsageExample
 
 ## Setup Screen
