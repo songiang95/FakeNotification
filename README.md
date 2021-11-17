@@ -1,341 +1,115 @@
 # Permissions
 
-- **android.permission.USE_FINGERPRINT**
-- **android.permission.USE_BIOMETRIC**
-- **android.permission.VIBRATE**
-- **android.permission.SYSTEM_ALERT_WINDOW**
-- **android.permission.ACTION_MANAGE_OVERLAY_PERMISSION**
-- **android.permission.CAMERA**
-- **android.permission.PACKAGE_USAGE_STATS**
+### Required
+
+- android.permission.VIBRATE
+- android.permission.PACKAGE_USAGE_STATS
+- android.permission.SYSTEM_ALERT_WINDOW
+- android.permission.ACTION_MANAGE_OVERLAY_PERMISSION
+
+### Fingerprint
+
+- android.permission.USE_FINGERPRINT
+- android.permission.USE_BIOMETRIC
+
+### Intruder
+
+- android.permission.CAMERA
+
+# Classes
 
 ```kotlin
-//check usage stat permission
-fun hasUsageStatPermission(context: Context): Boolean {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode =
-            appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName
-            )
-        return mode == AppOpsManager.MODE_ALLOWED
-    }
-
-    return true
-}
-
-//request usage stat permission
-fun requestUsageStatPermission(context: Context) {
-    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-    context.startActivity(intent)
-}
-
-//check manager overlay permission
-fun hasManagerOverlayPermission(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-        true
-    else
-        Settings.canDrawOverlays(context)
-}
-
-//request manager overlay permission
-fun requestManagerOverlayPermission(context: Context) {
-    val intent = try {
-        Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.fromParts("package", context.packageName, null as String?)
-        )
-    } catch (e: Exception) {
-        Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-    }
-
-    context.startActivity(intent)
-}
-
-//check camera permission
-fun checkCameraPermission(): Boolean {
-    return ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED
-}
-
-//request camera permission
-fun requestCameraPermission() {
-    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 0)
-}
-
+data class AppLockInfo(val pkgName: String, val isLocked: Boolean)
 ```
 
-# AppLockManager
+- **Properties**
 
-## Constructor
-
-```kotlin
-AppLockManagerImpl(val context : Context)
-```
-
-## Properties
-
-```kotlin
-val suggestApps: Flow<List<AppLockInfo>>
-```
-
-List all apps can be lock with some apps suggest to lock
+  - pkgName: String used to identify an app
+  - isLocked: Boolean true if app is locked by user
+  - AppLockInfo.descriptionId: Int resource id for AppLockInfo description
 
 ##
 
 ```kotlin
-val appLockInfo: Flow<List<AppLockInfo>>
+data class AppLockSetting(
+    val patternVisible: Boolean,
+    val fingerprintEnable: Boolean,
+    val intruderEnable: Boolean,
+    val intruderTimes: Int,
+    val lockTimeOut: Long
+)
 ```
 
-List all apps can be locked
+- **Properties**
+  - patternVisible: Boolean true if lines are visible in locked screen
+  - fingerprintEnable: Boolean true to enable fingerprint feature
+  - intruderEnable : Boolean true to enable to capture image of intruders
+  - intruderTimes : Int if times of failed attempts are more than the intruderTimes them camera
+    will be take an picture
+  - lockTimeOut: Long is an time(ms) threshold to an unlocked state back to locked state
 
 ##
 
 ```kotlin
-val intruders: Flow<List<AppLockIntruder>>
-
+data class AppLockIntruder(
+    val id: Int,
+    val pkgName: String,
+    val created: Long,
+    val imagePath: String
+)
 ```
 
-List intruder has been captured
+- **Properties**
+  - id: Int identify of intruder
+  - pkgName: String package name of the app that intruder tries to unlock
+  - created: Long datetime when camera captured an image
+  - imagePath: String where contains image on device
 
 ##
 
 ```kotlin
-val settings: Flow<AppLockSetting>
+class AppLockManagerImpl(val context: Context) : IAppLockManager
 ```
 
-App lock setting
-
-## Public methods
-
-```kotlin
-suspend fun lock(pkgName: String)
-```
-
-Lock an app
-
-- **Parameters:**
-  - pkgName: package name of app will be locked.
-
-##
-
-```kotlin
-suspend fun lock(pkgNames: List<String>)
-```
-
-Lock a list of app
-
-- **Parameters:**
-  - pkgNames: list package name of apps will be locked.
-
-##                                                                                                                                                                                                                                                              
-
-```kotlin
-suspend fun unlock(pkgName: String)
-```
-
-Unlock an app
-
-- **Parameters:**
-  - pkgName: package name of app will be unlocked
-
-##
-
-```kotlin
-suspend fun unlock(pkgNames: List<String>)
-```
-
-Unlock a list of app
-
-- **Parameters:**
-  - pkgName: package name of apps will be unlocked
-
-##
-
-```kotlin
-suspend fun clearAllLockedApp()
-```
-
-All apps will be unlocked
-
-##
-
-```kotlin
-suspend fun isLock(pkgName: String): Boolean
-```
-
-Check if the app is locked or not
-
-- **Parameters:**
-  - pkgName: package name of app to check.
-
-##
-
-```kotlin
-fun setPassword(password: String, pattern: Boolean)
-```
-
-Set password for lock screen
-
-- **Parameters:**
-  - password: new password, password is a String of 4 number
-  - pattern: set true to use lock pattern, false to use lock pin
-
-##
-
-```kotlin
-suspend fun deleteIntruder(intruder: Intruder)
-```
-
-Delete intruder photo
-
-- **Parameters:**
-  - intruder: intruder to delete
-
-##
-
-```kotlin
-suspend fun deleteIntruders(intruders: List<AppLockIntruder>)
-```
-
-Delete intruders photo
-
-- **Parameters:**
-  - intruders: list of intruder will be deleted
-
-##
-
-```kotlin
-suspend fun queryIntruder(id: Int): AppLockIntruder?
-```
-
-Find intruder by id
-
-- **Parameters:**
-  - id: id of intruder
-
-- **Return:**
-  - AppLockIntruder: intruder was found in database by id, could be null
-
-##
-
-```kotlin
-fun updateAppLockSetting(setting: AppLockSetting)
-```
-
-Change app lock setting
-
-- **Parameters:**
-  - setting: new applock setting
-
-##
-
-```kotlin
-fun setCustomAppLockScreen(layoutId: Int)
-```
-
-- **Parameters:**
-  - layoutId: custom layout id for lock screen (custom layout must have the save structure and id
-    as R.layout.activity_app_lock_screen.xml in module applock)
-
-##
-
-```kotlin
-fun hasPassword(): Boolean
-```
-
-Check password has been set or not
-
-- **Return:**
-  - Boolean: true if password has been set, false otherwise
-
-# Usage Example
-
-```kotlin
-
-//get list app with suggest lock
-viewModelScope.launch {
-  appLockManager.suggestApps.collect { apps ->
-    //convert to AppLockInfoModel
-  }
-}
-
-//get apps lock
-viewModelScope.launch {
-  appLockManager.appLockInfo.collect { apps ->
-    //convert to AppLockInfoModel
-  }
-}
-
-//get intruders
-viewModelScope.launch {
-  appLockManager.intruders.collect { intruders ->
-    //convert to IntruderModel
-  }
-}
-
-//get settings
-viewModelScope.launch {
-  appLockManager.settings.collect {
-    //update setting
-  }
-}
-
-//lock an app
-viewModelScope.launch {
-  //pkgName: "com.android.contact"
-  appLockManager.lock(pkgName)
-}
-
-//lock a list of app
-viewModelScope.launch {
-  //pkgNames: [com.android.sms, com.android.chrome,...]
-  appLockManager.lock(pkgNames)
-}
-
-
-//unlock an app
-viewModelScope.launch {
-  //pkgName: "com.android.contact"
-  appLockManager.unlock(pkgName)
-}
-
-//unlock a list of app
-viewModelScope.launch {
-  //pkgNames: [com.android.sms, com.android.chrome,...]
-  appLockManager.unlock(pkgNames)
-}
-
-//unlock all apps
-viewModelScope.launch {
-  appLockManager.clearAllLockedApp()
-}
-
-//set password
-//set valid password and use lock pattern
-appLockManager.setPassword("1234", true)
-//set valid password and use lock pin
-appLockManager.setPassword("1234", false)
-//set invalid password, password can only contain number
-appLockManager.setPassword("123a", false)
-
-//delete intruder
-viewModelScope.launch {
-  appLockManager.deleteIntruder(intruder)
-}
-
-//delete a list of intruders
-viewModelScope.launch {
-  appLockManager.deleteIntruders(intruders)
-}
-
-//query one intruder
-viewModelScope.launch {
-  val intruder = appLockManager.queryIntruder(id)
-  //intruder can be null
-}
-
-```
+- **Properties**
+  - ```val suggestApps: Flow<List<AppLockInfo>>```
+    - list installed apps which used to setup app lock function
+
+  - ```val appLockInfo: Flow<List<AppLockInfo>>```
+    - list installed apps which includes locked apps and unlocked apps
+
+  - ```val intruders: Flow<List<AppLockIntruder>>```
+    - list intruders who unlock failed times >= AppLockSetting.intruderTimes
+    - Note: in a session, at most one photo taken
+
+  - ```val settings: Flow<AppLockSetting>```
+    - where contains setting parameters of user
+    - Note
+      - lockTimeOut is starting when the app is closed.
+      - if set lockTimeOut = LOCK_AFTER_SCREEN_OFF then an unlocked state back to locked state
+        when the screen off
+
+- **Public methods**
+  - ```suspend fun lock(pkgName: String)```
+    - Use to lock an app
+    - **Parameters:**
+      - pkgName: String identify of app that will be locked
+
+  - ```suspend fun lock(pkgNames: List<String>)```
+    - Use to lock a list app
+    - **Parameters:**
+      - pkgNames: List<String> identify of apps that will be locked
+
+  - ```suspend fun unlock(pkgName: String)```
+    - Use to unlock an app
+    - **Parameters:**
+      - pkgName: String identify of app that will be unlocked
+
+    - ```suspend fun lock(pkgNames: List<String>)```
+      - Use to unlock a list app
+      - **Parameters:**
+        - pkgNames: List<String> identify of apps that will be unlocked
+
+
+
+# UsageExample
