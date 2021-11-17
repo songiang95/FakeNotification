@@ -146,7 +146,11 @@ fun scan() {
         }
     }
 }
+```
 
+### CPU Clean Process Screen
+
+```kotlin
 //clean process normal (without AccessibilitySettingsService permission)
 coroutineScope.launch {
     val progressChannel = boosterManager.cleanNormalProcess(
