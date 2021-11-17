@@ -241,6 +241,8 @@ Using to custom layout for locked screen
 
 # UsageExample
 
+## Setup Screen
+
 ```kotlin
 
 //Setup Screen [appLockManager.hasPassword() = false]
@@ -254,6 +256,8 @@ coroutineScope.launch {
 //required before moving to lock screen
 appLockManager.setPassword(password:String, pattern: Boolean)
 ```
+
+## LockManager Screen
 
 ```kotin
 //Lock Screen
@@ -274,6 +278,8 @@ coroutineScope.launch {
 }
 
 ```
+
+## Setting Screen
 
 ```kotlin
 //Setting Screen
