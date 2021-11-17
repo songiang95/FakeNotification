@@ -253,7 +253,9 @@ coroutineScope.launch {
 
 //required before moving to lock screen
 appLockManager.setPassword(password:String, pattern: Boolean)
+```
 
+```kotin
 // ***************Lock Screen***************
 //to retrieve locked app
 coroutineScope.launch {
@@ -270,6 +272,7 @@ coroutineScope.launch {
 coroutineScope.launch {
     appLockManager.unlock(pkgName)
 }
+
 
 //***************Setting Screen***************
 //to retrieve old setting
