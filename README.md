@@ -3,13 +3,7 @@
 ## Required
 
 - android.permission.READ_EXTERNAL_STORAGE
-- android.permission.GET_PACKAGE_SIZE
-- android.permission.PACKAGE_USAGE_STATS
-
-## Install and Uninstall apps
-
-- android.permission.REQUEST_INSTALL_PACKAGES
-- android.permission.REQUEST_DELETE_PACKAGES
+- android.permission.PACKAGE_USAGE_STATS (android version >= 8.0)
 
 # Classes
 
@@ -111,6 +105,19 @@ Delete selected apk files by corresponding ids in sequence
     - activity: AppCompatActivity
     - ids: list id are extract from list selected app files
 
+## ApkFileUtils
+
+```kotlin
+//static function
+suspend fun installApks(activity: AppCompatActivity, paths: List<String>)
+```
+
+Install list selected apk files to device
+
+- **Parameters**
+    - activity: AppCompatActivity
+    - ids: list id are extract from list selected app files
+
 # Usage Example
 
 ## Cache App Screen
@@ -122,7 +129,7 @@ coroutineScope.launch {
 
     }
 }
-// to clear cache data of an app
+// to clear cache data of apps
 coroutineScope.launch {
     cacheAppManager.clean(activity: AppCompatActivity, ids: List< String >)
 }
@@ -139,7 +146,7 @@ coroutineScope.launch {
     }
 }
 
-// to uninstall an app
+// to uninstall apps
 coroutineScope.launch {
     installedAppManager.clean(activity: AppCompatActivity, ids: List< String >)
 }
@@ -158,6 +165,11 @@ coroutineScope.launch {
 // to delete apk files
 coroutineScope.launch {
     apkFileManager.clean(activity: AppCompatActivity, ids: List< String >)
+}
+
+// to install apk files
+coroutineScope.launch {
+    ApkFileUtils.installApks(activity: AppCompatActivity, ids: List< String >)
 }
 
 ```
