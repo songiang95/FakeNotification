@@ -1,199 +1,199 @@
-# Permissions
+# Permission
 
 ## Required
 
-- android.permission.READ_EXTERNAL_STORAGE
-- android.permission.PACKAGE_USAGE_STATS (android version >= 8.0)
-- android.permission.MANAGE_EXTERNAL_STORAGE (android version >= 11)
+- android.permission.BIND_NOTIFICATION_LISTENER_SERVICE
 
 # Classes
 
-## Enum JunkType
+## Notification App
 
 ```kotlin
-enum class JunkType {
-    TYPE_APP,
-    TYPE_EMPTY_FOLDER,
-    TYPE_DOWNLOADED,
-    TYPE_DOCUMENT,
-    TYPE_OTHER
-}
-```
-
-Type of junk, TYPE_APP is app cache, the rest are junk files
-
-## JunkScanningInfo
-
-```kotlin
-data class JunkScanningInfo(
-    val id: String,
-    val isCacheApp: Boolean,
-    val size: Long,
-    val percent: Int
+data class NotificationApp(
+    val pkgName: String,
+    val appName: String,
+    val locked: Boolean
 )
 ```
 
 ### Properties
 
-- id: package name for app cache and file path or uri for junk file
-- isCacheApp: true if scanning cache app, false if scanning junk files
-- size (byte): total size of app cache and junk file
-- percent: scanning junk progress
+- pkgName: package name of app
+- appName: app name
+- locked: if true then notifications of that app are ignored
 
-## JunkInfo
+## LockedNotification
+
+### Properties
 
 ```kotlin
-data class JunkInfo(
-    val id: String,
-    val name: String,
-    val type: JunkType,
-    val size: Long
+data class LockedNotification(
+    val id: Long,
+    val notifyId: Int,
+    val pkgName: String,
+    val title: String,
+    val content: String,
+    val created: Long
 )
 ```
 
-### Properties
+- id: identify a locked notification
+- notifyId: is notify id of the notification
+- pkgName: package name of app which send the notification
+- title: title of notification
+- content: content of notification
+- created: datetime when app send the notification
 
-- id: package name for app cache and file path or uri for junk file
-- name: app name for app cache and file name for junk file
-- type: type of junk (app cache or file)
-- size (byte): size of app cache or size of a junk file
-
-## JunkManager
+## LockNotificationManager
 
 ```kotlin
-class JunkManager(private val application: Application, private val scope: CoroutineScope)
+class LockNotificationManager(private val context: Context, scope: CoroutineScope)
 ```
 
 ### Properties
 
 ```kotlin
-val ignoringList: Flow<List<JunkInfo>>
+val ignoreApps: Flow<List<NotificationApp>>
 ```
 
-Contains list junk files which are ignored by user
+List installed apps which include locked apps and unlocked apps ( without system apps)
 
 ##
 
 ```kotlin
-val junkInfos: Flow<ResultOrProgress<List<JunkInfo>, JunkScanningInfo>>
+val lockedNotifications: Flow<List<LockedNotification>>
 ```
 
-Contains list junk files found on device and info of scanning progress
+List locked notifications which are distinguished by pkgName and notifyId fields
 
 ### Public methods
 
 ```kotlin
-suspend fun clean(junks: List<JunkInfo>, progress: (Int) -> Unit)
+suspend fun addIgnoreApp(pkgName: String)
 ```
 
-Clean junk files are selected
+Add an app to the list of apps whose notifications will be locked
 
-- **Parameters:**
-    - junk: list junk file selected to delete
-    - progress: lambda function return clean progress
+- **Parameter:**
+    - pkgName: package name of app
 
 ##
 
 ```kotlin
-suspend fun addIgnoring(junkInfos: List<JunkInfo>)
+suspend fun addIgnoreApps(pkgNames: List<String>)
 ```
 
-To ignore junk files which are moved to ignoring list
+Add apps to the list of apps whose notifications will be locked
 
-- **Parameters:**
-    - junkInfos: list junk file to add to ignore list
+- **Parameter:**
+    - pkgNames: package name of apps
 
 ##
 
 ```kotlin
-suspend fun removeIgnoring(ids: List<String>)
+suspend fun removeIgnoreApp(pkgName: String)
 ```
 
-To remove junk files out of ignoring list
+Remove an app from the list of apps whose notifications will be locked
 
-- **Parameters:**
-    - ids: list id of junk files to remove off the ignoring list
+- **Parameter:**
+    - pkgName: package name of app
+
+##
+
+```kotlin
+suspend fun removeIgnoreApps(pkgNames: List<String>)
+```
+
+Remove apps from the list of apps whose notifications will be locked
+
+- **Parameter:**
+    - pkgName: package name of app
+
+##
+
+```kotlin
+suspend fun removeNotifications(ids: List<Long>)
+```
+
+Remove list of locked notifications
+
+- **Parameter:**
+    - ids: list id of the LockedNotification
+
+##
+
+```kotlin
+fun open(id: Long, pkgName: String)
+```
+
+Open a locked notification
+
+- **Parameter:**
+    - id: id of the LockedNotification
+    - pkgName: package name of the app that notify the LockedNotification
+
+#### Note: if can not open locked notification via pending intent then app which notify the locked notification is opened
+
+##
+
+```kotlin
+static fun start(context: Context)
+```
+
+Start Notification Listener Service
+
+#### Note: must be called this function as soon as the application is opened to lock notification feature works
+
+##
+
+```kotlin
+static fun stop()
+```
+
+Disable locking notification feature
 
 # Usage Example
 
-## Scanning Screen
+## Locked Notification Screen
 
 ```kotlin
-//JunkFileViewModel.kt
-val _scanCachePercent = MutableLiveData<Int>()
-val _scanFilePercent = MutableLiveData<Int>()
-val _totalJunkSize = MutableLiveData<Long>()
-...
-fun scan() {
-    coroutineScope.launch {
-        junkManager.junkInfos.collect {
-            if (it is ResultOrProgress.Progress) {
-                if (it.progress.isCacheApp) {
-                    _scanCacheProgress.value = it.progress.percent
-                } else {
-                    _scanFileProgress.value = it.progress.percent
-                }
-                _totalJunkSize.value = it.progress.size
+//to get list locked notifications
 
-            } else {
-                ...
-            }
-        }
-    }
-}
-```
-
-## Junk File Result Screen
-
-```kotlin
-//JunkFileViewModel.kt
-//to get junks info
-val _junks = MutableLiveData<JunkInfo>()
-...
-fun scan() {
-
-    coroutineScope.launch {
-        junkManager.junkInfos.collect {
-            if (it is ResultOrProgress.Progress) {
-                ...
-            } else {
-                _junks.value = (it as ResultOrProgress.Result).result
-            }
-        }
-    }
-}
-
-//to ignore junk files
 coroutineScope.launch {
-    junkManager.addIgnoring(junkInfos: List< JunkInfo >)
+    lockNotificationManager.lockedNotifications.collect { lockedNotifications ->
+        ...
+    }
 }
+//to clear locked notifications
+coroutineScope.launch {
+    lockNotificationManager.removeNotifications(ids: List< Long >)
+}
+
+//to open a locked notification
+lockNotificationManager.open(id: Long, pkgName: String)
 
 ```
 
-## Ignoring Screen
+## Locked Notification App Screen
 
 ```kotlin
-//to get list ignoring junk files
+//to get list of all app in device
 coroutineScope.launch {
-    junkManager.ignoringList.collect { ignoreFiles ->
+    lockNotificationManager.ignoreApps.collect { ignoreApps ->
         ...
     }
 }
 
-//to remove an ignoring file or files
+//to lock notification of an app or list of app
 coroutineScope.launch {
-    junkManager.removeIgnoring(ids: List< String >)
+    lockNotificationManager.addIgnoreApp(pkgName: String) or
+            lockNotificationManager.addIgnoreApps(pkgNames: List< String >)
 }
 
-```
-
-## Cleaning Junk Screen
-
-```kotlin
-//to clean files which are selected
+//to not lock notification of an app or list of app
 coroutineScope.launch {
-    junkManager.clean(junks: List< JunkInfo >) { cleanProgress ->
-            //update cleaning progress
-        }
+    lockNotificationManager.removeIgnoreApp(pkgName: String) or
+            lockNotificationManager.removeIgnoreApps(pkgNames: List< String >)
 }
 ```
