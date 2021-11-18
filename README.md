@@ -1,199 +1,141 @@
-# Permission
+# Permissions
 
-## Required
+## Encryption Scanner
 
-- android.permission.BIND_NOTIFICATION_LISTENER_SERVICE
+- android.permission.ACCESS_COARSE_LOCATION
+- android.permission.ACCESS_FINE_LOCATION
 
 # Classes
 
-## Notification App
+## Enum ScanningType
 
 ```kotlin
-data class NotificationApp(
-    val pkgName: String,
-    val appName: String,
-    val locked: Boolean
+enum class ScanningType {
+    DNS,
+    SSL,
+    ARP,
+    ENCRYPTION
+}
+```
+
+## Enum IssueCode
+
+```kotlin
+enum class IssueCode {
+    NO_INTERNET,
+    ARP_DUPLICATE_MAC,
+    SSL_MITM,
+    DNS_INVALID,
+    WIFI_NO_PASSWORD,
+}
+```
+
+## WifiIssue
+
+```kotlin
+data class WifiIssue(
+    val type: ScanningType,
+    val issueCode: IssueCode
 )
 ```
 
 ### Properties
 
-- pkgName: package name of app
-- appName: app name
-- locked: if true then notifications of that app are ignored
+- type: Scanning type
+- issueCode: issue code
 
-## LockedNotification
-
-### Properties
+## WifiScanning
 
 ```kotlin
-data class LockedNotification(
-    val id: Long,
-    val notifyId: Int,
-    val pkgName: String,
-    val title: String,
-    val content: String,
-    val created: Long
-)
-```
-
-- id: identify a locked notification
-- notifyId: is notify id of the notification
-- pkgName: package name of app which send the notification
-- title: title of notification
-- content: content of notification
-- created: datetime when app send the notification
-
-## LockNotificationManager
-
-```kotlin
-class LockNotificationManager(private val context: Context, scope: CoroutineScope)
+class WifiScanning(type: ScanningType)
 ```
 
 ### Properties
 
-```kotlin
-val ignoreApps: Flow<List<NotificationApp>>
-```
+- type: wifi security type will be scanned
 
-List installed apps which include locked apps and unlocked apps ( without system apps)
-
-##
+## WifiScanningDone
 
 ```kotlin
-val lockedNotifications: Flow<List<LockedNotification>>
+class WifiScanningDone(type: ScanningType, val issue: WifiIssue?)
 ```
 
-List locked notifications which are distinguished by pkgName and notifyId fields
+### Properties
+
+- type: wifi security type has been scanned
+- issue: wifi issue after scanned
+- isSafe: Boolean true if wifi security type (ScanningType) has no issue
+
+## WifiSecurity
+
+```kotlin
+class WifiSecurity(context: Context, val scope: CoroutineScope)
+```
 
 ### Public methods
 
 ```kotlin
-suspend fun addIgnoreApp(pkgName: String)
+fun scan() = flowProgress<List<WifiIssue>, WifiScanningState>
 ```
 
-Add an app to the list of apps whose notifications will be locked
+Scanning malicious WIFI networks which in sequence ARP, DNS, ENCRYPTION, SSL attacking
 
-- **Parameter:**
-    - pkgName: package name of app
+- **Return:**
+  -Flow\<ResultOrProgress\<List\<WifiIssue\>, WifiScanningState\>\>: list of wifi issue or wifi
+  scanning state
 
 ##
 
 ```kotlin
-suspend fun addIgnoreApps(pkgNames: List<String>)
+static fun findCurrentWifi(context: Context): MyWifiInfo?
 ```
 
-Add apps to the list of apps whose notifications will be locked
+Retrieve current wifiInfo which is connected.
 
-- **Parameter:**
-    - pkgNames: package name of apps
-
-##
-
-```kotlin
-suspend fun removeIgnoreApp(pkgName: String)
-```
-
-Remove an app from the list of apps whose notifications will be locked
-
-- **Parameter:**
-    - pkgName: package name of app
-
-##
-
-```kotlin
-suspend fun removeIgnoreApps(pkgNames: List<String>)
-```
-
-Remove apps from the list of apps whose notifications will be locked
-
-- **Parameter:**
-    - pkgName: package name of app
-
-##
-
-```kotlin
-suspend fun removeNotifications(ids: List<Long>)
-```
-
-Remove list of locked notifications
-
-- **Parameter:**
-    - ids: list id of the LockedNotification
-
-##
-
-```kotlin
-fun open(id: Long, pkgName: String)
-```
-
-Open a locked notification
-
-- **Parameter:**
-    - id: id of the LockedNotification
-    - pkgName: package name of the app that notify the LockedNotification
-
-#### Note: if can not open locked notification via pending intent then app which notify the locked notification is opened
-
-##
-
-```kotlin
-static fun start(context: Context)
-```
-
-Start Notification Listener Service
-
-#### Note: must be called this function as soon as the application is opened to lock notification feature works
-
-##
-
-```kotlin
-static fun stop()
-```
-
-Disable locking notification feature
+- **Return:**
+    - MyWifiInfo: information about the current wifi connected, null if your device is not connected
+      to any wifi networks
 
 # Usage Example
 
-## Locked Notification Screen
+## Wifi Scanning Screen
 
 ```kotlin
-//to get list locked notifications
-
+//WifiScannerViewModel.kt
+//to get wifi scanning progress
 coroutineScope.launch {
-    lockNotificationManager.lockedNotifications.collect { lockedNotifications ->
-        ...
+    wifiScanner.scan().collect {
+        if (it is ResultOrProgress.Progress) {
+            val scanningType = it.progress.type
+            if (it.progress is WifiScanning) {
+                //update scanning state
+            } else if (it.progress is WifiScanningDone) {
+                val isSafe = it.progress.isSafe
+                //update scanning done state
+            }
+        } else {
+            ...
+        }
     }
 }
-//to clear locked notifications
-coroutineScope.launch {
-    lockNotificationManager.removeNotifications(ids: List< Long >)
-}
-
-//to open a locked notification
-lockNotificationManager.open(id: Long, pkgName: String)
 
 ```
 
-## Locked Notification App Screen
+## Wifi Scanning Result Screen
 
 ```kotlin
-//to get list of all app in device
+//WifiScannerViewModel.kt
+//to get wifi issues
 coroutineScope.launch {
-    lockNotificationManager.ignoreApps.collect { ignoreApps ->
-        ...
+    val _issues = MutableLiveData<List<WifiIssue>>()
+
+    wifiScanner.scan().collect {
+        if (it is ResultOrProgress.Progress) {
+            ...
+        } else {
+            _issues.value = (it as ResultOrProgress.Result).result
+        }
     }
 }
 
-//to lock notification of an app or list of app
-coroutineScope.launch {
-    lockNotificationManager.addIgnoreApp(pkgName: String) or
-            lockNotificationManager.addIgnoreApps(pkgNames: List< String >)
-}
-
-//to not lock notification of an app or list of app
-coroutineScope.launch {
-    lockNotificationManager.removeIgnoreApp(pkgName: String) or
-            lockNotificationManager.removeIgnoreApps(pkgNames: List< String >)
-}
 ```
